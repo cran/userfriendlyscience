@@ -1,0 +1,20 @@
+exportPattern("^[[:alpha:]]+");
+importFrom('pwr', 'pwr.t.test');
+importFrom('GGally', 'ggpairs', 'getPlot', 'putPlot');
+importFrom('plyr', 'ddply');
+importFrom('grid', 'unit', 'grid.newpage', 'pushViewport', 'viewport', 'grid.layout');
+importFrom('fBasics', 'adTest');
+importFrom('e1071', 'skewness', 'kurtosis');
+importFrom('psych', 'describe', 'omega', 'glb', 'fa', 'principal');
+importFrom('ltm', 'cronbach.alpha');
+importFrom('MBESS', 'ci.reliability');
+importFrom('foreign', 'read.spss');
+importFrom('knitr', 'knit');
+importFrom('xtable', 'xtable');
+importFrom('ggplot2', 'ggplot', 'theme_grey', 'theme', '%+replace%', 'aes', 'aes_string',
+           'geom_line', 'geom_point', 'geom_violin', 'geom_jitter', 'geom_dotplot',
+           'geom_pointrange', 'geom_errorbar', 'geom_histogram', 'geom_density',
+           'element_line', 'element_rect', 'element_text', 'element_blank',
+           'position_jitter', 'position_dodge',
+           'stat_summary', 'labs', 'xlab', 'ylab', 'rel');
+importFrom('lavaan', 'sem');

@@ -1,0 +1,106 @@
+\name{userfriendlyscienceBasics}
+\alias{userfriendlyscienceBasics}
+\alias{safeRequire}
+\alias{trim}
+\alias{noZero}
+\alias{formatR}
+\alias{repeatStr}
+\alias{ifelseObj}
+\alias{invertItem}
+%- Also NEED an '\alias' for EACH other topic documented here.
+\title{
+userfriendlyscience basics
+}
+\description{
+The userfriendlyscience basics functions are some very basic functions to make life that little bit easier.
+}
+\usage{
+safeRequire(packageName)
+trim(str)
+noZero(str)
+formatR(r, digits)
+repeatStr(str = " ", n = 1)
+ifelseObj(condition, ifTrue, ifFalse)
+invertItem(item, range=NULL, ignorePreviousInversion = FALSE)
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{packageName}{
+The name of the package, as character string.
+}
+  \item{str}{
+The character string to process.
+}
+  \item{r}{
+The Pearson correlation to format.
+}
+  \item{digits}{
+The number of digits to use when formatting the Pearson correlation.
+}
+  \item{n}{
+The number of times to repeat the string.
+}
+  \item{condition}{
+  Condition to evaluate.
+}
+  \item{ifTrue}{
+  Object to return if the condition is true.
+}
+  \item{ifFalse}{
+  Object to return if the condition is false.
+}
+  \item{item}{
+  Item to invert
+}
+  \item{range}{
+  If provided it must be a numeric vector with the minimum and the maximum of the scale. If not provided, the range function is used (so, use this range argument if the scale minimum and/or maximum do not occur in the data).
+}
+  \item{ignorePreviousInversion}{
+  If this item has already been inverted, the function will halt with an error unless it's told to ignore previous inversions with this boolean.
+}
+}
+\details{
+The safeRequire function checks whether a package is already installed. If so, it loads the package (using require/library). If not, it first installs it, and then loads it.
+
+The trim function removes whitespaces from the start and end of a text string.
+
+The noZero function removes the first zero from a string that was originally a number.
+
+The formatR function format a Pearson correlation for pretty printing (using noZero).
+
+The repeatStr function repeats a string a given number of times.
+
+The ifelseObj function just evaluates a condition, returning one object if it's true, and another if it's false.
+
+The invertItem function 'unmirrors' an inverted item (i.e. for a 1-3 item, 1 becomes 3, 2 stays 2, and 3 becomes 1).
+}
+\value{
+safeRequire returns nothing.
+
+trim, noZero, formatR, and repeatStr return a string.
+
+ifelseObj return an object.
+
+The invertItem function returns the inverted item vector, with an attribute "inverted" set to TRUE.
+}
+\examples{
+
+### load a package
+safeRequire('ggplot2');
+
+### trim a string
+trim(' this is a string with whitespace in front and at the end               ');
+### Returns "this is a string with whitespace in front and at the end"
+
+repeatStr("-", 8);
+### Returns "--------" (incredibly useful, no? :-))
+
+tempVector <- c(1,2,3,3,2,4,3,2,1,1,3,4,5,4,3,2,2,1,1,2);
+invertedTempVector <- invertItem(tempVector);
+
+### We can also invert it back, but then we have to override the security
+### that prevents accidently inverting items back.
+invertItem(tempVector, ignorePreviousInversion=TRUE);
+
+}
+\keyword{ utilities }
