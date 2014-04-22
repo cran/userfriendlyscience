@@ -91,3 +91,43 @@ invertItem <- function(item, range=NULL, ignorePreviousInversion = FALSE) {
   return(res);
 }
 
+### Basically what Marc Schwartz suggested at Thu Jul 1 19:10:28 CEST 2010
+### on the R-help mailing list, see https://stat.ethz.ch/pipermail/r-help/2010-July/244299.html
+is.odd <- function(vector) {
+  return((vector %% 2) != 0);
+}
+is.even <- function(vector) {
+  return((vector %% 2) == 0);
+}
+
+### Convert a vector to numeric values and trying to be smart about it.
+convertToNumeric <- function (vector, byFactorLabel = FALSE) {
+  if (!is.vector(vector)) {
+    stop("Argument 'vector' must be a vector! To mass convert e.g. a dataframe, ",
+         "use massConvertToNumber.");
+  }
+  if(is.factor(vector) && byFactorLabel) {
+    ### Decimal symbol might be a comma instead of a period: convert
+    ### factor to character vector and replace commas with periods
+    return(as.numeric(gsub(as.character(vector), pattern=",", replacement=".")));
+  }
+  else if (is.character(vector)) {
+    return(as.numeric(gsub(as.character(vector), pattern=",", replacement=".")));
+  }
+  else {
+    ### Thus, for numeric vectors; factors to be converted by index of the levels
+    ### instead of by their labels; and logical vectors.
+    return(as.numeric(vector));
+  }
+}
+
+massConvertToNumeric <- function (dat, byFactorLabel = FALSE, ignoreCharacter = TRUE) {
+  return(as.data.frame(lapply(dat, function(x) {
+    if (is.character(x) && ignoreCharacter) {
+      return(x);
+    }
+    else {
+      return(convertToNumeric(x, byFactorLabel = byFactorLabel));
+    }
+  })));
+}

@@ -9,8 +9,8 @@ dlvPlot
 The dlvPlot function produces a dot-violin-line plot, and dlvTheme is the default theme.
 }
 \usage{
-dlvPlot(dat, x = NULL, y, z = NULL, jitter = "FALSE",
-        binnedDots = TRUE, binwidth=NULL,
+dlvPlot(dat, x = NULL, y, z = NULL, conf.level = .95,
+        jitter = "FALSE", binnedDots = TRUE, binwidth=NULL,
         error="lines", dotsize="density", densityDotBaseSize=3,
         normalDotBaseSize=3, violinAlpha = .2, dotAlpha = .4,
         lineAlpha = 1, meanDotSize=5, posDodge=0)
@@ -29,6 +29,9 @@ dlvTheme(base_size = 14, base_family = "")
 }
   \item{z}{
   Character value with the name of the moderator variable, must refer to a categorical variable (i.e. a factor).
+}
+  \item{conf.level}{
+  Confidence of confidence intervals.
 }
   \item{jitter}{
   Logical value (i.e. TRUE or FALSE) whether or not to jitter individual datapoints. Note that jitter cannot be combined with posDodge (see below).

@@ -13,6 +13,9 @@
 \alias{print.scaleReliability}
 \alias{print.sdConfInt}
 \alias{print.testRetestAlpha}
+\alias{print.testRetestCES}
+\alias{print.testRetestReliability}
+\alias{print.parallelSubscales}
 \title{
 userfriendlyscience print methods
 }
@@ -38,6 +41,9 @@ colNames = x$colNames, pval=x$pval, ...)
 \method{print}{scaleReliability}(x, digits=x$input$digits, ...)
 \method{print}{sdConfInt}(x, digits=2, ...)
 \method{print}{testRetestAlpha}(x, ...)
+\method{print}{testRetestCES}(x, digits=x$input$digits, ...)
+\method{print}{testRetestReliability}(x, digits=x$input$digits, ...)
+\method{print}{parallelSubscales}(x, nsmall=2, ...)
 }
 \arguments{
   \item{x}{

@@ -1,7 +1,7 @@
 Package: userfriendlyscience
 Type: Package
-Title: Userfriendlyscience: quantitative analysis made accessible
-Version: 0.1.1
+Title: Quantitative analysis made accessible
+Version: 0.1-2
 Date: 2014-02-25
 Author: Gjalt-Jorn Peters
 Maintainer: Gjalt-Jorn Peters <gjalt-jorn@userfriendlyscience.com>
@@ -12,10 +12,11 @@ Description: This package contains a number of functions that serve
   SPSS equivalents; and second, make a number of slightly more
   advanced functions more userfriendly to relatively novice users.
 URL: http://userfriendlyscience.com
-Imports: lavaan, psych, GGally, pwr, plyr, grid, fBasics, e1071, ltm,
-        MBESS, knitr, xtable, foreign
+Imports: plyr, psych, pwr, fBasics, e1071, ltm, MBESS, foreign, knitr,
+        xtable, GGally, grid, lavaan
 Depends: ggplot2
-Packaged: 2014-04-17 16:18:32 UTC; micro_000
+Suggests: XLConnect
+Packaged: 2014-04-21 19:58:58 UTC; micro_000
 NeedsCompilation: no
 Repository: CRAN
-Date/Publication: 2014-04-17 23:17:14
+Date/Publication: 2014-04-22 07:26:56

@@ -7,7 +7,10 @@
 \alias{repeatStr}
 \alias{ifelseObj}
 \alias{invertItem}
-%- Also NEED an '\alias' for EACH other topic documented here.
+\alias{is.odd}
+\alias{is.even}
+\alias{convertToNumeric}
+\alias{massConvertToNumeric}
 \title{
 userfriendlyscience basics
 }
@@ -22,8 +25,12 @@ formatR(r, digits)
 repeatStr(str = " ", n = 1)
 ifelseObj(condition, ifTrue, ifFalse)
 invertItem(item, range=NULL, ignorePreviousInversion = FALSE)
+is.odd(vector)
+is.even(vector)
+convertToNumeric(vector, byFactorLabel = FALSE)
+massConvertToNumeric(dat, byFactorLabel = FALSE, ignoreCharacter = TRUE)
+
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{packageName}{
 The name of the package, as character string.
@@ -58,6 +65,15 @@ The number of times to repeat the string.
   \item{ignorePreviousInversion}{
   If this item has already been inverted, the function will halt with an error unless it's told to ignore previous inversions with this boolean.
 }
+  \item{dat, vector}{
+  The dataframe of vector to process.
+}
+  \item{byFactorLabel}{
+  If TRUE, convertToNumeric and massConvertToNumeric use the factor labels, interpreted as character vectors, to determine the numeric value, instead of the level's indices (which is what as.numeric() does).
+}
+  \item{ignoreCharacter}{
+  If TRUE, character vectors are ignored. If FALSE, character vectors are converted (or, an attempt is made :-)).
+  }
 }
 \details{
 The safeRequire function checks whether a package is already installed. If so, it loads the package (using require/library). If not, it first installs it, and then loads it.
@@ -73,6 +89,9 @@ The repeatStr function repeats a string a given number of times.
 The ifelseObj function just evaluates a condition, returning one object if it's true, and another if it's false.
 
 The invertItem function 'unmirrors' an inverted item (i.e. for a 1-3 item, 1 becomes 3, 2 stays 2, and 3 becomes 1).
+
+is.odd and is.even check whether a number is, or numbers in a vector are, odd or even.
+
 }
 \value{
 safeRequire returns nothing.
@@ -82,6 +101,9 @@ trim, noZero, formatR, and repeatStr return a string.
 ifelseObj return an object.
 
 The invertItem function returns the inverted item vector, with an attribute "inverted" set to TRUE.
+
+is.odd and is.even return a logical vector.
+
 }
 \examples{
 

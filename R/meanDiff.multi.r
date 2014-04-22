@@ -13,15 +13,18 @@
 
 ### Note: this is necessary to prevent Rcmd CHECK from throwing a note;
 ### otherwise it think these variable weren't defined yet.
-utils::globalVariables(c('g', 'g.ci.lo', 'g.ci.hi'));
+utils::globalVariables(c('g', 'g.ci.lo', 'g.ci.hi', 'ci.lo', 'ci.hi'));
 
 ###########################################################
 ### Define functions
 ###########################################################
 
 meanDiff.multi <- function(dat, y, x=NULL, var.equal = "yes",
-                     conf.level = .95, digits = 2,
-                     envir = parent.frame()) {
+                           conf.level = .95, digits = 2,
+                           orientation = "vertical",
+                           zeroLineColor = "grey",
+                           zeroLineSize = 1.2,
+                           envir = parent.frame()) {
 
   ### Check basic arguments
   if (!is.character(var.equal) || length(var.equal) != 1) {
@@ -47,6 +50,7 @@ meanDiff.multi <- function(dat, y, x=NULL, var.equal = "yes",
   res <- list();
   res$results.raw <- list();
   res$plots <- list();
+  res$dlvPlots <- list();
   res$results.compiled <- data.frame();
   res$plots.compiled <- list();
   res$input <- list();
@@ -150,11 +154,16 @@ meanDiff.multi <- function(dat, y, x=NULL, var.equal = "yes",
                                rep(1, length(res$results.raw[[length(res$results.raw)]]$y))),
                              levels=c(0,1), labels=c(res$results.raw[[length(res$results.raw)]]$groups[1],
                                                      res$results.raw[[length(res$results.raw)]]$groups[2]));
-        ### Store plot
-        res$plots[[length(res$plots) + 1]] <-
-          ggplot(tempData, aes(y=y, x=x, group=x)) + geom_point() +
-          stat_summary(fun.data = "mean_cl_boot", colour = "red");
+        
+        ### Store dlvPlot
+        res$dlvPlots[[length(res$dlvPlots) + 1]] <- dlvPlot(tempData, y="y", x="x", conf.level=conf.level);
 
+        ### Store regular plot with lines, use dlvPlot descriptives
+        res$plots[[length(res$plots) + 1]] <- ggplot(tempData, aes(y=y, x=x, group=x)) +
+          geom_point() +
+          geom_pointrange(data=res$dlvPlots[[length(res$dlvPlots)]]$descr,
+                          aes(x=x, y=mean, ymin=ci.lo, ymax=ci.hi), color="red");
+                          
         ### Extract information for compilation
         res$results.compiled[nrow(res$results.compiled)+1, 'x'] <- x[xVar];
         res$results.compiled[nrow(res$results.compiled), 'y'] <- y[yVar];
@@ -203,9 +212,15 @@ meanDiff.multi <- function(dat, y, x=NULL, var.equal = "yes",
       res$plots.compiled[[x[xVar]]] <- ggplot(tempDat,
                                               aes(x=y, y=g,
                                                   ymin=g.ci.lo,
-                                                  ymax=g.ci.hi)) +
+                                                  ymax=g.ci.hi));
+      if (tolower(orientation) == "vertical") {
+        res$plots.compiled[[x[xVar]]] <- res$plots.compiled[[x[xVar]]] +
+          coord_flip();
+      }
+      res$plots.compiled[[x[xVar]]] <- res$plots.compiled[[x[xVar]]] +
+        geom_hline(color=zeroLineColor, size=zeroLineSize) +
         geom_pointrange(size=1) + labs(x="interval variable",
-                         y="effect size g (unbiased estimate of Cohen's d)");
+                                         y="effect size g (unbiased estimate of Cohen's d)");
     }
   }
   

@@ -1,18 +1,20 @@
 testRetestAlpha <- function(dat = NULL, moments = NULL,
                             testDat = NULL, retestDat = NULL,
-                            sortItems = FALSE) {
+                            sortItems = FALSE, convertToNumeric = TRUE) {
   
   res <- list(input = list(dat = dat,
                            moments = moments,
                            testDat = testDat,
                            retestDat = retestDat,
-                           sortItems = sortItems),
+                           sortItems = sortItems,
+                           convertToNumeric = convertToNumeric),
               intermediate = list(), output = list());
   
   ### If no dataframe was specified, load it from an SPSS file
   if (is.null(dat) && is.null(testDat) && is.null(retestDat)) {
-    dat <- getData(errorMessage=paste0("No dataframe specified, and no valid SPSS file selected in ",
-                                       "the dialog I then showed to allow selection of a dataset."),
+    dat <- getData(errorMessage=paste0("No dataframe specified, and no valid datafile selected in ",
+                                       "the dialog I then showed to allow selection of a dataset.",
+                                       "Original error:\n\n[defaultErrorMessage]"),
                    use.value.labels=FALSE);
   }
   
@@ -32,6 +34,11 @@ testRetestAlpha <- function(dat = NULL, moments = NULL,
   if (sortItems) {
     res$intermediate$testDat <- testDat <- testDat[, order(names(testDat))];
     res$intermediate$retestDat <- retestDat <- retestDat[, order(names(retestDat))];
+  }
+
+  if (convertToNumeric) {
+    res$intermediate$testDat <- testDat <- massConvertToNumeric(testDat);
+    res$intermediate$retestDat <- retestDat <- massConvertToNumeric(retestDat);
   }
   
   ### So now we have a testDat and a retestDat, so we can get started.

@@ -97,7 +97,9 @@ rMatrix <- function(dat, x, y=NULL, conf.level = .95, correction = "fdr",
   for(curXvar in x) {
     yCounter <- 1;
     for(curYvar in y) {
-      curTest <- cor.test(dat[,curXvar], dat[,curYvar], use="complete.obs");
+      curTest <- cor.test(dat[,curXvar], dat[,curYvar],
+                          use="complete.obs",
+                          conf.level = conf.level);
       res$r[xCounter, yCounter] <- curTest$estimate;
       res$parameter[xCounter, yCounter] <- curTest$parameter;
       res$ci.lo[xCounter, yCounter] <- curTest$conf.int[1];

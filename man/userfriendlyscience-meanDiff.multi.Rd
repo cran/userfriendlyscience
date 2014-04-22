@@ -8,7 +8,9 @@ The meanDiff.multi function compares many means for many groups. It presents the
 }
 \usage{
 meanDiff.multi(dat, y, x=NULL, var.equal = "yes", conf.level = .95,
-               digits = 2, envir = parent.frame())
+               digits = 2, orientation = "vertical",
+               zeroLineColor = "grey", zeroLineSize = 1.2,
+               envir = parent.frame())
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -29,6 +31,15 @@ meanDiff.multi(dat, y, x=NULL, var.equal = "yes", conf.level = .95,
 }
   \item{digits}{
   With what precision you want the results to print.
+}
+  \item{orientation}{
+  Whether to plot the effect size confidence intervals vertically (like a forest plot, the default) or horizontally.
+}
+  \item{zeroLineColor}{
+  Color of the horizontal line at an effect size of 0 (set to 'white' to not display the line; also adjust the size to 0 then).
+}
+  \item{zeroLineSize}{
+  Size of the horizontal line at an effect size of 0 (set to 0 to not display the line; also adjust the color to 'white' then).
 }
   \item{envir}{
   The environment where to search for the variables (useful when calling meanDiff from a function where the vectors are defined in that functions environment).

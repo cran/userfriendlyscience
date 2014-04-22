@@ -1,0 +1,20 @@
+
+
+(version 1.1-2)
+
+(Mon Apr 21 21:56:57 2014)
+getData improved to read more filetypes
+Improved error message for getData and changed the way it's called when no dataframe is supplied
+Added functions for test-retest reliability
+Added functions for filtering datafile for SPSS compatibility
+Added is.odd() and is.even()
+convertToNumeric and massConvertToNumeric added to convert vectors to numeric vectors.
+testRetestReliability() added to conveniently call both testRetestAlpha() and testRetestCES().
+meanDiff.multi improved to generate a forest plot by default, with line at zero to show 'significant' deviations more clearly
+dlvPlot improved to show better confidence intervals and take confidence level into account
+rMatrrix now uses conf.level argument to construct confidence intervals
+
+(version 1.1-1)
+
+(Tue Apr 17 18:23:00 2014)
+Initial Release

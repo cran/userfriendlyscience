@@ -1,18 +1,21 @@
 \name{basicSPSStranslationFunctions}
 \alias{basicSPSStranslationFunctions}
 \alias{getData}
+\alias{filterBy}
+\alias{useAll}
 \alias{mediaan}
 \alias{modus}
 \title{
 Basic SPSS translation functions
 }
 \description{
-Basic functons to make working with R easier for SPSS users
+Basic functons to make working with R easier for SPSS users: getData provides an easy way to load SPSS datafiles; filterBy and useAll allow easy temporary filtering of rows from the dataframe; mediaan and modus compute the median and mode of ordinal or numeric data.
 }
 \usage{
-getData(filename=NULL, errorMessage =
-        "Specified file does not exist or does not have the extension .sav!",
-        use.value.labels=TRUE, to.data.frame=TRUE, ...)
+getData(filename=NULL, errorMessage = "[defaultErrorMessage]",
+        use.value.labels=TRUE, to.data.frame=TRUE, stringsAsFactors=TRUE, ...)
+filterBy(dat, expression, replaceOriginalDataframe = TRUE, envir = parent.frame())
+useAll(dat, replaceFilteredDataframe = TRUE)
 mediaan(vector)
 modus(vector)
 }
@@ -22,17 +25,36 @@ modus(vector)
   It is possible to specify a path and filename to load here. If not specified, the default R file selection dialogue is shown
 }
   \item{errorMessage}{
-  The error message that is shown if the file does not exist or does not have the right extension.
+  The error message that is shown if the file does not exist or does not have the right extension; "[defaultErrorMessage]" is replaced with
+  a default error message (and can be included in longer messages).
 }
   \item{use.value.labels}{
-  See read.spss in package foreign.
-  }
+  Only useful when reading from SPSS files: whether to read variables with value labels as factors (TRUE) or numeric vectors (FALSE).
+}
   \item{to.data.frame}{
-  See read.spss in package foreign.
-  }
+  Only useful when reading from SPSS files: whether to return a dataframe or not.
+}
+  \item{stringsAsFactors}{
+  Whether to read strings as strings (FALSE) or factors (TRUE).
+}
   \item{...}{
-  Additional options, passed on to read.spss in package foreign.
-  }
+  Additional options, passed on to the function used to import the data (which depends on the extension of the file).
+}
+  \item{dat}{
+  Dataframe to process: for filterBy, dataframe to filter rows from; for useAll, dataframe to restore ('unfilter').
+}
+  \item{expression}{
+  Logical expression determining which rows to keep and which to drop. Can be either a logical vector or a string which is then evaluated. If it's a string, it's evaluated using 'with' to evaluate the expression using the variable names.
+}
+  \item{replaceOriginalDataframe}{
+  Whether to also replace the original dataframe in the parent environment. Very messy, but for maximum compatibility with the 'SPSS way of doing things', by default, this is true. After all, people who care about the messiness/inappropriateness of this function wouldn't be using it in the first place :-)
+}
+  \item{envir}{
+  The environment where to create the 'backup' of the unfiltered dataframe, for when useAll is called and the filter is deactivated again.
+}
+  \item{replaceFilteredDataframe}{
+  Whether to replace the filtered dataframe passed in the 'dat' argument (see replaceOriginalDataframe).
+}
   \item{vector}{
   For mediaan and modus, the vector for which to find the median or mode.
   }
@@ -46,6 +68,9 @@ mediaan returns the median, or, in the case of a factor where the median is in b
 modus returns the mode.
 
 }
+\note{
+getData() currently can't read from LibreOffice or OpenOffice files. There doesn't seem to be a platform-independent package that allows this. Non-CRAN package ROpenOffice from OmegaHat should be able to do the trick, but fails to install (manual download and installation using http://www.omegahat.org produces "ERROR: dependency 'Rcompression' is not available for package 'ROpenOffice'" - and manual download and installation of RCompression produces "Please define LIB_ZLIB; ERROR: configuration failed for package 'Rcompression'"). If you have any suggestions, please let me know!
+}
 \examples{
 
 ### Open a dialogue to read an SPSS file
@@ -58,6 +83,13 @@ if (interactive()) {
 ### Get a median and a mode
 mediaan(c(1,2,2,3,4,4,5,6,6,6,7));
 modus(c(1,2,2,3,4,4,5,6,6,6,7));
+
+### Create an example dataframe
+(exampleDat <- data.frame(x=rep(8, 8), y=rep(c(0,1), each=4)));
+### Filter it, replacing the original dataframe
+(filterBy(exampleDat, "y=0"));
+### Restore the old dataframe
+(useAll(exampleDat));
 
 }
 \keyword{ utilities }

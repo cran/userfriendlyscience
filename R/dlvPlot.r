@@ -33,8 +33,8 @@ dlvTheme <- function(base_size = 14, base_family = "") {
     )
 }
 
-dlvPlot <- function(dat, x = NULL, y, z = NULL, jitter = "FALSE",
-                    binnedDots = TRUE, binwidth=NULL,
+dlvPlot <- function(dat, x = NULL, y, z = NULL, conf.level = .95,
+                    jitter = "FALSE", binnedDots = TRUE, binwidth=NULL,
                     error="lines", dotsize="density", densityDotBaseSize=3,
                     normalDotBaseSize=3, violinAlpha = .2, dotAlpha = .4,
                     lineAlpha = 1, meanDotSize=5, posDodge=0) {
@@ -92,19 +92,21 @@ dlvPlot <- function(dat, x = NULL, y, z = NULL, jitter = "FALSE",
         (densityDotBaseSize/mean(res$dat$y_density, na.rm=TRUE));
       
       ### Construct dataframe with confidence interval info
+      n <- nrow(res$dat);
       mean <- mean(res$dat[, y]);
       sd <- sd(res$dat[, y]);
       se <- sd / sqrt(nrow(res$dat));
-      ci.lo <- mean - 1.96 * se;
-      ci.hi <- mean + 1.96 * se;
+      criticalValue <- qt(1-((1-conf.level)/2), df=n-1); 
+      ci.lo <- mean - criticalValue * se;
+      ci.hi <- mean + criticalValue * se;
       res$descr <- data.frame(y = y,
-                              n = nrow(res$dat),
+                              n = n,
                               mean = mean, sd = sd,
                               se = se,
                               ci.lo = ci.lo,
                               ci.hi = ci.hi);
-      res$yRange=c(min(res$dat[[y]][!is.na(dat[[y]])]),
-                   max(res$dat[[y]][!is.na(dat[[y]])]));
+      res$yRange=c(min(res$dat[[y]][!is.na(res$dat[[y]])]),
+                   max(res$dat[[y]][!is.na(res$dat[[y]])]));
       
       ### Generate plot
       res$plot <- ggplot(data=res$dat, aes_string(x=xVarName, y=y));
@@ -115,8 +117,9 @@ dlvPlot <- function(dat, x = NULL, y, z = NULL, jitter = "FALSE",
       }
       else {
         if (binnedDots) {
+          tempBinwidth <- ifelse(is.null(binwidth), (res$yRange[2]-res$yRange[1])/30, binwidth);
           res$plot <- res$plot + geom_dotplot(alpha=dotAlpha, show_guide=FALSE,
-                                              binaxis="y", binwidth=binwidth, size=normalDotBaseSize,
+                                              binaxis="y", binwidth=tempBinwidth, size=normalDotBaseSize,
                                               stackdir="center", position=position_dodge(width=posDodge));
         }
         else if (dotsize=="density") {
@@ -170,22 +173,24 @@ dlvPlot <- function(dat, x = NULL, y, z = NULL, jitter = "FALSE",
         ### Store y values and name of y variable in res$dat dataframe
         res$dat <- rbind(res$dat, tempDf);
         ### Get mean and confidence interval for descriptives table
+        n <- nrow(tempDf);
         mean <- mean(tempDf$y);
         sd <- sd(tempDf$y);
         se <- sd / sqrt(nrow(tempDf));
-        ci.lo <- mean - 1.96 * se;
-        ci.hi <- mean + 1.96 * se;
+        criticalValue <- qt(1-((1-conf.level)/2), df=n-1); 
+        ci.lo <- mean - criticalValue * se;
+        ci.hi <- mean + criticalValue * se;
         ### Add descriptives
         res$descr <- rbind(res$descr, data.frame(y = currentVar,
-                                                 n = nrow(tempDf),
+                                                 n = n,
                                                  mean = mean, sd = sd,
                                                  se = se,
                                                  ci.lo = ci.lo,
                                                  ci.hi = ci.hi));
       }
       
-      #res$yRange=c(min(res$dat[[y]][!is.na(dat[[y]])]),
-      #             max(res$dat[[y]][!is.na(dat[[y]])]));
+      res$yRange=c(min(res$dat[['y']][!is.na(res$dat[['y']])]),
+                   max(res$dat[['y']][!is.na(res$dat[['y']])]));
       
       res$plot <- ggplot(data=res$dat, aes(x=x, y=y));
       res$plot <- res$plot + dlvTheme();
@@ -195,8 +200,9 @@ dlvPlot <- function(dat, x = NULL, y, z = NULL, jitter = "FALSE",
       }
       else {
         if (binnedDots) {
+          tempBinwidth <- ifelse(is.null(binwidth), (res$yRange[2]-res$yRange[1])/30, binwidth);
           res$plot <- res$plot + geom_dotplot(alpha=dotAlpha, show_guide=FALSE,
-                                              binaxis="y", binwidth=binwidth, size=normalDotBaseSize,
+                                              binaxis="y", binwidth=tempBinwidth, size=normalDotBaseSize,
                                               stackdir="center", position=position_dodge(width=posDodge)
                                               );
         }
@@ -233,13 +239,15 @@ dlvPlot <- function(dat, x = NULL, y, z = NULL, jitter = "FALSE",
       
       ### Construct dataframe with confidence interval info
       res$descr <- ddply(.data = res$dat, .variables = c(x),
-                         .fun = function (dat) {
+                         .fun = function (dat, conf.level) {
                            dat <- dat[complete.cases(dat), ];
+                           n <- nrow(dat);
                            mean <- mean(dat[, y]);
                            sd <- sd(dat[, y]);
                            se <- sd / sqrt(nrow(dat));
-                           ci.lo <- mean - 1.96 * se;
-                           ci.hi <- mean + 1.96 * se;
+                           criticalValue <- qt(1-((1-conf.level)/2), df=n-1); 
+                           ci.lo <- mean - criticalValue * se;
+                           ci.hi <- mean + criticalValue * se;
                            rslt <- data.frame(x = dat[1, x],
                                               y = y,
                                               n = nrow(dat),
@@ -248,7 +256,7 @@ dlvPlot <- function(dat, x = NULL, y, z = NULL, jitter = "FALSE",
                                               ci.hi = ci.hi);
                            rslt <- rslt[complete.cases(rslt), ];
                            return(rslt);
-                         });
+                         }, conf.level=conf.level);
       ### Store densities; must be done for each group (value of x)
       ### separately
       res$dat <- ddply(.data = res$dat, .variables = c(x),
@@ -263,8 +271,9 @@ dlvPlot <- function(dat, x = NULL, y, z = NULL, jitter = "FALSE",
                          return(dat);
                        });
       
-      res$yRange=c(min(res$dat[[y]][!is.na(dat[[y]])]),
-                   max(res$dat[[y]][!is.na(dat[[y]])]));
+      res$yRange=c(min(res$dat[[y]][!is.na(res$dat[[y]])]),
+                   max(res$dat[[y]][!is.na(res$dat[[y]])]));
+      
       res$plot <- ggplot(data=res$dat, aes_string(x=x, y=y));
       res$plot <- res$plot + dlvTheme();
       res$plot <- res$plot + geom_violin(trim=FALSE, alpha=violinAlpha, fill="#BBBBBB", linetype="blank", position=position_dodge(width=posDodge));
@@ -273,8 +282,9 @@ dlvPlot <- function(dat, x = NULL, y, z = NULL, jitter = "FALSE",
       }
       else {
         if (binnedDots) {
+          tempBinwidth <- ifelse(is.null(binwidth), (res$yRange[2]-res$yRange[1])/30, binwidth);
           res$plot <- res$plot + geom_dotplot(alpha=dotAlpha, show_guide=FALSE,
-                                              binaxis="y", binwidth=binwidth, size=normalDotBaseSize,
+                                              binaxis="y", binwidth=tempBinwidth, size=normalDotBaseSize,
                                               stackdir="center", position=position_dodge(width=posDodge));
         }
         else if (dotsize=="density") {
@@ -307,13 +317,15 @@ dlvPlot <- function(dat, x = NULL, y, z = NULL, jitter = "FALSE",
 
       ### Construct dataframe with confidence interval info
       res$descr <- ddply(.data = res$dat, .variables = c(x, z),
-                     .fun = function (dat) {
+                     .fun = function (dat, conf.level) {
                        dat <- dat[complete.cases(dat), ];
+                       n <- nrow(dat);
                        mean <- mean(dat[, y]);
                        sd <- sd(dat[, y]);
                        se <- sd / sqrt(nrow(dat));
-                       ci.lo <- mean - 1.96 * se;
-                       ci.hi <- mean + 1.96 * se;
+                       criticalValue <- qt(1-((1-conf.level)/2), df=n-1); 
+                       ci.lo <- mean - criticalValue * se;
+                       ci.hi <- mean + criticalValue * se;
                        res <- data.frame(x = dat[1, x],
                                          y = y,
                                          z = dat[1, z],
@@ -322,7 +334,7 @@ dlvPlot <- function(dat, x = NULL, y, z = NULL, jitter = "FALSE",
                                          se = se, ci.lo = ci.lo,
                                          ci.hi = ci.hi);
                        return(res[complete.cases(res), ]);
-                     });
+                     }, conf.level=conf.level);
       ### Store densities; must be done for each group (value of x)
       ### separately
       res$dat <- ddply(.data = res$dat, .variables = c(x, z),
@@ -337,8 +349,8 @@ dlvPlot <- function(dat, x = NULL, y, z = NULL, jitter = "FALSE",
                          return(dat);
                        });
 
-      res$yRange=c(min(res$dat[[y]][!is.na(dat[[y]])]),
-                   max(res$dat[[y]][!is.na(dat[[y]])]));
+      res$yRange=c(min(res$dat[[y]][!is.na(res$dat[[y]])]),
+                   max(res$dat[[y]][!is.na(res$dat[[y]])]));
       
       res$plot <- ggplot(data=res$dat, aes_string(x=x, y=y, z=z, colour=z, group=paste0(x,":",z)));
       res$plot <- res$plot + dlvTheme();
@@ -348,9 +360,10 @@ dlvPlot <- function(dat, x = NULL, y, z = NULL, jitter = "FALSE",
       }
       else {
         if (binnedDots) {
+          tempBinwidth <- ifelse(is.null(binwidth), (res$yRange[2]-res$yRange[1])/30, binwidth);
           res$plot <- res$plot + geom_dotplot(alpha=dotAlpha, show_guide=FALSE,
                                               aes_string(fill=z), binaxis="y",
-                                              binwidth=binwidth, size=normalDotBaseSize,
+                                              binwidth=tempBinwidth, size=normalDotBaseSize,
                                               stackdir="center", position=position_dodge(width=posDodge));
         }
         else if (dotsize=="density") {

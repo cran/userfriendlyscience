@@ -1,0 +1,22 @@
+userfriendlyscience NEWS
+------------------------
+
+1.1-2 2014-04-21
+  * testRetestReliability() added to conveniently call both testRetestAlpha()
+    and testRetestCES().
+  * testRetestAlpha() and testRetestCES() added to compute the test-retest
+    coefficient Alpha and the Coefficient of Equivalence and Stability (CES).
+  * filterBy() and useAll() added for users coming from SPSS
+  * convertToNumeric and massConvertToNumeric added to convert vectors to
+    numeric vectors.
+  * meanDiff.multi improved to generate a forest plot by default, with line at
+    zero to show 'significant' deviations more clearly
+  * dlvPlot improved to show better confidence intervals and take confidence level
+    into account
+  * getData() can now also read from .csv, .tsv, .xls, and .xlsx. If
+    ROpenOffice from http://omegahat.org is installed, .ods can be read,
+    too.
+  * Added is.odd() and is.even() to check whether numbers (or numbers in a vector) are off or even.
+
+1.1.1 2014-04-17
+  * Initial Release

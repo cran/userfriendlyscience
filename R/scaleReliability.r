@@ -1,61 +1,3 @@
-###########################################################
-###
-### R file with the function scale.ic, which is basically
-### just a convenient wrapper for functions in three other
-### packages (psych, GPArotation, and ltm) that compute
-### Cronbach's alpha, the GLB, and omega(total).
-###
-### File created by Gjalt-Jorn Peters. Questions? You can
-### contact me through http://behaviorchange.eu.
-###
-###########################################################
-
-###########################################################
-### 
-### Example of the use of the function for SPSS users
-###
-### The easiest way is to simply save a datafile with only
-### the items in the scale you're interested in (repeat
-### this if there are multiple such scales, of course).
-### This is possible by selecting "Save As" in SPSS's
-### File menu and then clicking the button marked
-### "Variables". This allows the user to select which
-### variables to store by 'keeping' or 'dropping'
-### variables.
-###
-### Then use the commands below to load the resulting
-### datafile into R and obtain the internal consistency
-### measures.
-###
-### To use these commands, remove the three hash symbols
-### at the start of each line below, and replace
-### [[FOLDER&FILENAME]] with the folder and filename of
-### the datafile, for example:
-### "C:/Users/Gjalt-Jorn/Desktop/datafile.sav"
-### Note that in R, instead of backslashes, you have to
-### use slashes like in this example.
-### Then, simply paste these lines into R:
-###
-############ START OF R CODE
-### if (!is.element("foreign", installed.packages()[,1])) {
-###    install.packages("foreign");
-### }
-### require('foreign');
-### dat <- read.spss("[[FOLDER&FILENAME]]",
-###                  use.value.labels=FALSE,
-###                  to.data.frame=TRUE);
-### scale.ic(dat = dat);
-############ END OF R CODE
-###
-### R will then report Cronbach's alpha, the GLB,
-### and Omega(total).
-### 
-###########################################################
-
-###########################################################
-### Define functions
-###########################################################
-
 scaleReliability <- function (dat=NULL, items = 'all', digits = 2,
                               ci = TRUE, conf.level=.95, silent=FALSE,
                               samples=1000, bootstrapSeed = NULL,
@@ -69,9 +11,10 @@ scaleReliability <- function (dat=NULL, items = 'all', digits = 2,
   
   ### If no dataframe was specified, load it from an SPSS file
   if (is.null(dat)) {
-    dat <- getData(errorMessage=paste0("No dataframe specified, and no valid SPSS file selected in ",
-                                             "the dialog I then showed to allow selection of a dataset."),
-                         use.value.labels=FALSE);
+    dat <- getData(errorMessage=paste0("No dataframe specified, and no valid datafile selected in ",
+                                       "the dialog I then showed to allow selection of a dataset.",
+                                       "Original error:\n\n[defaultErrorMessage]"),
+                   use.value.labels=FALSE);
     res$input$dat.name <- paste0("SPSS file imported from ", attr(dat, "filename"));
   }
   else {
@@ -156,7 +99,7 @@ scaleReliability <- function (dat=NULL, items = 'all', digits = 2,
       
       ### Check whether seed value is specified
       if (is.null(bootstrapSeed)) {
-        bootstrapSeed <- as.numeric(format(Sys.time(), "%Y%d%m"));
+        bootstrapSeed <- as.numeric(format(Sys.time(), "%Y%m%d"));
         warning("No 'bootstrapSeed' specified. This means that the ",
                 "bootstrapping results will not be exactly replicable. ",
                 "Setting current date as seed (", bootstrapSeed, ").");

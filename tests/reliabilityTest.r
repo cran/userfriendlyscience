@@ -2,16 +2,23 @@
 ### Generate an object and store the parameters
 reliabilityExample <- list();
 reliabilityExample$nrOfItems <- 10;
-reliabilityExample$trueScoreMean <- 5;
-reliabilityExample$trueScoreVariance <- 5;
+reliabilityExample$trueScoreMean <- 20;
+reliabilityExample$trueScoreVariance <- 4;
 reliabilityExample$nrOfParticipants <- 250;
 reliabilityExample$nrOfMoments <- 2;
-reliabilityExample$itemErrorVariance <- .5;
-reliabilityExample$transientErrorVariance <- 1;
+reliabilityExample$itemErrorVariance <- 9;
+reliabilityExample$transientErrorVariance <- 3;
+reliabilityExample$varianceMultiplierBasis <- .5;
 reliabilityExample$seed <- 19811026;
 
 ### Set random seed
 set.seed(reliabilityExample$seed);
+
+### Determine itemvariance multiplyer for each item; get a random number
+### from the normal distribution, then use exp to convert it to a sensible
+### multiplier.
+reliabilityExample$itemMultipliers <- 
+    exp(rnorm(reliabilityExample$nrOfItems, sd=reliabilityExample$varianceMultiplierBasis));
 
 ### Generate the dataframe and each participants' true score
 reliabilityExample$dat <- data.frame(trueScore = 
@@ -31,19 +38,20 @@ for (currentMoment in 0:(reliabilityExample$nrOfMoments-1)) {
     ###   a random measurement error with a given variance plus
     ###   a transient error for this moment for this participant
     reliabilityExample$dat[[paste0("t", currentMoment, "_item", currentItem)]] <-
-      reliabilityExample$dat$trueScore +
-      rnorm(reliabilityExample$nrOfParticipants, sd = sqrt(reliabilityExample$itemErrorVariance)) +
-      currentTransientErrors;
+      reliabilityExample$itemMultipliers[currentItem] *
+        (reliabilityExample$dat$trueScore +
+         rnorm(reliabilityExample$nrOfParticipants, sd = sqrt(reliabilityExample$itemErrorVariance)) +
+         currentTransientErrors);
   }
 }
 
 ### Show correlation matrices within each measurement moment
 for (currentMoment in 0:(reliabilityExample$nrOfMoments-1)) {
-  print(cor(reliabilityExample$dat[, paste0("exampleData$t", currentMoment, "_item", 1:reliabilityExample$nrOfItems)]));
+  print(round(cor(reliabilityExample$dat[, paste0("t", currentMoment, "_item", 1:reliabilityExample$nrOfItems)]), digits=2));
 }
 
 ### Show complete correlation matrix
-cor(reliabilityExample$dat[, 2:ncol(reliabilityExample$dat)]);
+print(cor(reliabilityExample$dat[, 2:ncol(reliabilityExample$dat)]), digits=2);
 
 ### And covariance matrix
 cov(reliabilityExample$dat[, 2:ncol(reliabilityExample$dat)]);
@@ -51,7 +59,7 @@ cov(reliabilityExample$dat[, 2:ncol(reliabilityExample$dat)]);
 ### Compute reliability estimates for each measurement moment
 for (currentMoment in 0:(reliabilityExample$nrOfMoments-1)) {
   print(scaleReliability(reliabilityExample$dat,
-                         paste0("exampleData$t", currentMoment, "_item", 1:reliabilityExample$nrOfItems),
+                         paste0("t", currentMoment, "_item", 1:reliabilityExample$nrOfItems),
                          ci=FALSE));
 }
 
@@ -59,12 +67,62 @@ for (currentMoment in 0:(reliabilityExample$nrOfMoments-1)) {
 reliabilityExample$dat.split <- list();
 for (currentMoment in 0:(reliabilityExample$nrOfMoments-1)) {
   reliabilityExample$dat.split[[paste0("t", currentMoment)]] <-
-    reliabilityExample$dat[, paste0("exampleData$t", currentMoment, "_item", 1:reliabilityExample$nrOfItems)];
+    reliabilityExample$dat[, paste0("t", currentMoment, "_item", 1:reliabilityExample$nrOfItems)];
 }
 
 ### Show item-time covariances for the first two measurements
-cov(x=reliabilityExample$dat.split$t0,
-    y=reliabilityExample$dat.split$t1);
+print(cov(x=reliabilityExample$dat.split$t0,
+          y=reliabilityExample$dat.split$t1), digits=2);
 
 ### Show test-retest alpha
 print(testRetestAlpha(reliabilityExample$dat[, 2:ncol(reliabilityExample$dat)]));
+
+### Show test-retest CES
+print(testRetestCES(reliabilityExample$dat[, 2:ncol(reliabilityExample$dat)]));
+
+### Show test-retest CES when subscales have uneven numbers of items
+start_time1 <- 2;
+end_time1 <- start_time1 + reliabilityExample$nrOfItems - 1;
+start_time2 <- end_time1 + 1;
+end_time2 <- start_time2 + reliabilityExample$nrOfItems - 1;
+itemSelection <- c(start_time1:(end_time1-1), start_time2:(end_time2-1));
+
+print(testRetestCES(reliabilityExample$dat[, itemSelection]));
+
+### Compute both at the same time
+print(testRetestReliability(reliabilityExample$dat[, itemSelection]));
+
+### Or for the complete scales
+print(testRetestReliability(reliabilityExample$dat[, 2:ncol(reliabilityExample$dat)]));
+
+### Once more with less items
+itemSelection <- c(start_time1:(end_time1-5), start_time2:(end_time2-5));
+print(testRetestReliability(reliabilityExample$dat[, itemSelection]));
+
+### For comparison, the single administration reliability measures:
+itemSelection <- c(start_time1:(end_time1-5));
+print(scaleReliability(reliabilityExample$dat[, itemSelection], ci=FALSE));
+
+### And for time 2:
+itemSelection <- c(start_time2:(end_time2-5));
+print(scaleReliability(reliabilityExample$dat[, itemSelection], ci=FALSE));
+
+### Uncomment these line to store the data, respectively as .csv or as an R dataframe object.
+### Don't forget to change the paths!
+
+# write.csv(reliabilityExample$dat, row.names = FALSE,
+#           file="B:/Data/statistics/R/library/userfriendlyscience/data/testRetestSimData.csv");
+# testRetestSimData <- reliabilityExample$dat;
+# save(testRetestSimData,
+#      file="B:/Data/statistics/R/library/userfriendlyscience/data/testRetestSimData.rda")
+
+### To save a version without the first column (i.e. without the true score), so that it
+### can be loaded directly into the functions when providing no arguments, use:
+
+# write.csv(reliabilityExample$dat[, 2:ncol(reliabilityExample$dat)], row.names = FALSE,
+#           file="B:/Data/research/cronbach's alpha - reliability and validity/osf/exampleData.csv");
+
+### Or, to save less items, use itemSelection:
+
+# write.csv(reliabilityExample$dat[, itemSelection], row.names = FALSE,
+#           file="B:/Data/research/cronbach's alpha - reliability and validity/osf/selectedExampleData.csv");
