@@ -13,7 +13,8 @@
 
 ### Scale Diagnosis
 scaleDiagnosis <- function(dat=NULL, items=NULL, plotSize=180, sizeMultiplier = 1,
-                          axisLabels = "none", scaleReliability.ci=FALSE, conf.level=.95) {
+                          axisLabels = "none", scaleReliability.ci=FALSE,
+                          conf.level=.95, powerHist=TRUE, ...) {
   
   ### dat            = dataframe
   ### items  = a list of the variables that together
@@ -57,43 +58,10 @@ scaleDiagnosis <- function(dat=NULL, items=NULL, plotSize=180, sizeMultiplier = 
   
   ### Bivariate correlations
   res$cor <- cor(res$dat, use="complete.obs");
-  
-  ### The size of each panel in the scattermatrix depends
-  ### on the number of items - therefore, we need to adjust
-  ### the plot sizes to the number of items.
-  baseSize <- (sizeMultiplier * (plotSize / ncol(res$cor))) / 100;
-  
-  plotSettings <- theme(axis.line = element_line(size = baseSize),
-                        panel.grid.major = element_line(size = baseSize/2),
-                        line = element_line(size = baseSize/2),
-                        axis.ticks = element_line (size=baseSize/2)
-                       );  
-  
-  ### Visual representation of bivariate correlations
-  ### First generate a normal scattermatrix with histograms
-  ### on the diagonal
-  res$ggpairs.normal <- ggpairs(res$dat, diag=list(continuous="bar", discrete="bar"),
-                                axisLabels=axisLabels);
-  ### Then generate one with jittered points
-  res$ggpairs.jittered <- ggpairs(res$dat, params=c(position="jitter"), axisLabels=axisLabels);
-  ### Then place the histograms on the diagonal of
-  ### the jittered scattermatrix
-  res$ggpairs.combined <- res$ggpairs.jittered;
-  for (currentVar in 1:length(items)) {
-    res$ggpairs.combined <-
-      putPlot(res$ggpairs.combined,
-              getPlot(res$ggpairs.normal, currentVar, currentVar),
-              currentVar, currentVar);
-  }
 
-  for (currentRowFromTop in 1:length(items)) {
-    for (currentColumnFromLeft in 1:length(items)) {
-      res$ggpairs.combined <-
-        putPlot(res$ggpairs.combined,
-                getPlot(res$ggpairs.combined, currentRowFromTop, currentColumnFromLeft) + plotSettings,
-                currentRowFromTop, currentColumnFromLeft);
-    }
-  }
+  res$scatterMatrix <- scatterMatrix(res$dat, plotSize=180, sizeMultiplier = 1,
+                                     axisLabels = "none", powerHist=powerHist, ...);
+                                       
   
   ### Exploratory factor analysis
   #pa.out <- factor.pa(r = bfi, nfactors = 5, residuals = FALSE,
@@ -138,6 +106,6 @@ print.scaleDiagnosis <- function(x, ...) {
   print(x$pca$loadings, ...);
   cat("\n");
   print(x$describe, ...);
-  print(x$ggpairs.combined, ...);
+  print(x$scatterMatrix$output$scatterMatrix, ...);
   invisible();
 }

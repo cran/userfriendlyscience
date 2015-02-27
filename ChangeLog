@@ -1,4 +1,9 @@
 
+(version 1.2-0)
+Added regr() and oneway()
+Added samplingDistribution() and didacticPlot()
+Added dataShape() so that e1071 is no longer needed for Skewness and Kurtosis in normalityAssessment()
+Added associationMatrix()
 
 (version 1.1-2)
 
@@ -6,7 +11,7 @@
 getData improved to read more filetypes
 Improved error message for getData and changed the way it's called when no dataframe is supplied
 Added functions for test-retest reliability
-Added functions for filtering datafile for SPSS compatibility
+Added functions for filtering datafile (for SPSS compatibility)
 Added is.odd() and is.even()
 convertToNumeric and massConvertToNumeric added to convert vectors to numeric vectors.
 testRetestReliability() added to conveniently call both testRetestAlpha() and testRetestCES().

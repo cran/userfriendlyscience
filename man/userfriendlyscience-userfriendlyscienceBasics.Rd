@@ -3,6 +3,7 @@
 \alias{safeRequire}
 \alias{trim}
 \alias{noZero}
+\alias{formatPvalue}
 \alias{formatR}
 \alias{repeatStr}
 \alias{ifelseObj}
@@ -18,9 +19,10 @@ userfriendlyscience basics
 The userfriendlyscience basics functions are some very basic functions to make life that little bit easier.
 }
 \usage{
-safeRequire(packageName)
+safeRequire(packageName, mirrorIndex=NULL)
 trim(str)
 noZero(str)
+formatPvalue(values, digits = 3, spaces=TRUE, includeP = TRUE)
 formatR(r, digits)
 repeatStr(str = " ", n = 1)
 ifelseObj(condition, ifTrue, ifFalse)
@@ -35,14 +37,34 @@ massConvertToNumeric(dat, byFactorLabel = FALSE, ignoreCharacter = TRUE)
   \item{packageName}{
 The name of the package, as character string.
 }
+  \item{mirrorIndex}{
+The index of the mirror to use, in case you want to specify the mirror
+in the call (see e.g. /code{/link{getCRANmirrors}()[, 1:4]} for an overview
+of these mirrors. For example, at the time of writing, Antwerp is 7,
+Amsterdam is 60, and Auckland is 62).
+}
   \item{str}{
 The character string to process.
 }
-  \item{r}{
-The Pearson correlation to format.
+  \item{values}{
+The p-values to format.
 }
   \item{digits}{
-The number of digits to use when formatting the Pearson correlation.
+For formatPvalue, number of digits to round to. Numbers smaller than this
+number will be shown as <.001 or <.0001 etc.
+
+For formatR, the number of digits to use when formatting the
+Pearson correlation.
+}
+  \item{spaces}{
+Whether to include spaces between symbols, operators, and digits.
+}
+  \item{includeP}{
+Whether to include the 'p' and '='-symbol in the results (the '<' symbol
+is always included).
+}
+  \item{r}{
+The Pearson correlation to format.
 }
   \item{n}{
 The number of times to repeat the string.
@@ -81,6 +103,8 @@ The safeRequire function checks whether a package is already installed. If so, i
 The trim function removes whitespaces from the start and end of a text string.
 
 The noZero function removes the first zero from a string that was originally a number.
+
+The 
 
 The formatR function format a Pearson correlation for pretty printing (using noZero).
 

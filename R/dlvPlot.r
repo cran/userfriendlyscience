@@ -45,8 +45,14 @@ dlvPlot <- function(dat, x = NULL, y, z = NULL, conf.level = .95,
   
   ### Store data
   res$dat.raw <- dat;
+  ### Remove irrelevant variables
+  res$dat <- dat <- data.frame(dat[, c(x, y, z)]);
+  
   ### Remove incomplete cases
-  res$dat <- dat[complete.cases(dat), ];
+  res$dat <- data.frame(dat[complete.cases(dat), ]);
+
+  ### Replace names again
+  names(dat) <- names(res$dat) <- c(x, y, z);
   
   if(!is.null(x) & !(is.factor(dat[, x]))) {
     warning("Error: variable x (', x,') is not of type factor. X must be a categorical ",

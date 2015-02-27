@@ -6,7 +6,7 @@ hasLaTeX <- function(pdfLatexPath) {
 ### Function to escape special latex characters, based on
 ### http://stackoverflow.com/questions/5406071/r-sweave-latex-escape-variables-to-be-printed-in-latex
 sanitizeLatexString <- function(str) {
-  str <- gsub('([#$%&~_\\^\\\\{}])', '\\\\\\1', str, perl = TRUE);
+  return(gsub('([#$%&~_\\^\\\\{}])', '\\\\\\1', str, perl = TRUE));
 }
 
 rnwString.initiate <- function(studyName, authorName,

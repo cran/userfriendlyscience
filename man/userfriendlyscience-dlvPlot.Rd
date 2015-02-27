@@ -95,6 +95,9 @@ An object is returned with the following elements:
   \item{plot}{The plot itself}
 }
 \examples{
+### Note: the 'not run' is simply because running takes a lot of time,
+###       but these examples are all safe to run!
+\dontrun{
 ### Create simple dataset
 dat <- data.frame(x1 = factor(rep(c(0,1), 20)),
                   x2 = factor(c(rep(0, 20), rep(1, 20))),
@@ -109,5 +112,6 @@ dlvPlot(dat, x='x1', y='y', z='x2');
 dlvPlot(dat, x='x1', y='y', z='x2', jitter=TRUE);
 ### Although just dodging the density-sized dots might work better
 dlvPlot(dat, x='x1', y='y', z='x2', posDodge=.3);
+}
 }
 \keyword{ utilities }

@@ -13,7 +13,8 @@
 
 ### Note: this is necessary to prevent Rcmd CHECK from throwing a note;
 ### otherwise it think these variable weren't defined yet.
-utils::globalVariables(c('g', 'g.ci.lo', 'g.ci.hi', 'ci.lo', 'ci.hi'));
+utils::globalVariables(c('g', 'g.ci.lo', 'g.ci.hi', 'ci.lo', 'ci.hi',
+                         'coord_flip', 'geom_hline'));
 
 ###########################################################
 ### Define functions

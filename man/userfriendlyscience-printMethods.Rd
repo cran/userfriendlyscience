@@ -16,6 +16,16 @@
 \alias{print.testRetestCES}
 \alias{print.testRetestReliability}
 \alias{print.parallelSubscales}
+\alias{print.dataShape}
+\alias{print.didacticPlot}
+\alias{print.scatterMatrix}
+\alias{print.CramersV}
+\alias{print.associationMatrix}
+\alias{print.confIntV}
+\alias{print.oneway}
+\alias{print.posthocTGH}
+\alias{print.scaleInspection}
+\alias{print.regr}
 \title{
 userfriendlyscience print methods
 }
@@ -44,6 +54,21 @@ colNames = x$colNames, pval=x$pval, ...)
 \method{print}{testRetestCES}(x, digits=x$input$digits, ...)
 \method{print}{testRetestReliability}(x, digits=x$input$digits, ...)
 \method{print}{parallelSubscales}(x, nsmall=2, ...)
+\method{print}{dataShape}(x, digits=x$input$digits, extraNotification=TRUE, ...)
+\method{print}{didacticPlot}(x, ...)
+\method{print}{scatterMatrix}(x, ...)
+\method{print}{CramersV}(x, digits = x$input$digits, ...)
+\method{print}{associationMatrix}(x, type = x$input$type,
+                                  info = x$input$info,
+                                  file = x$input$file, ...)
+\method{print}{confIntV}(x, digits = x$input$digits, ...)
+\method{print}{oneway}(x, digits = x$input$digits,
+                       pvalueDigits=x$input$pvalueDigits,
+                       na.print="", ...)
+\method{print}{posthocTGH}(x, digits = x$input$digits, ...)
+\method{print}{scaleInspection}(x, show=x$show, ...)
+\method{print}{regr}(x, digits=x$input$digits,
+                     pvalueDigits=x$input$pvalueDigits, ...) 
 }
 \arguments{
   \item{x}{
@@ -62,7 +87,25 @@ Whether the frequency object should be printed transposed (this can be useful fo
 Number of digits to use when printing the power.
 }
   \item{output, env.LaTeX, pboxWidthMultiplier, colNames, pval}{
-Output to produce; see ?rMatrix for details.
+Output to produce; see /code{/link{rMatrix}} for details.
+}
+  \item{type, info, file}{
+Output to produce and file to write to; see /code{/link{associationMatrix}} for details.
+}
+  \item{extraNotification}{
+Whether an extra notification about the type of skewness and kurtosis returned by dataShape is shown.
+}
+  \item{pvalueDigits}{
+The number of digits to show for p-values; smaller p-values will be shown as
+<.001 or <.0001 etc.
+}
+  \item{na.print}{
+What to print for missing values, for example for a oneway anova table.
+}
+  \item{show}{
+To override the 'show' argument, which is sometimes used to inhibit printing
+of extensive information with e.g. many plots, which is useful for some functions
+that, for example, primarily generate a PDF.
 }
   \item{...}{
 Addition arguments that are passed on to the print functions when it's called.
@@ -74,6 +117,8 @@ These printing methods return nothing, but print stuff.
 \examples{
 
 print.sdConfInt(sdConfInt(sd=4, n=20));
+
+print(oneway(y=ChickWeight$weight, x=ChickWeight$Diet), na.print="[NO VALUE]");
 
 }
 \keyword{ utilities }

@@ -37,7 +37,7 @@ scaleReliability <- function (dat=NULL, items = 'all', digits = 2,
     res$input$dat <- na.omit(subset(dat, select=items));
   }
   
-  ### If any of the variables in the dat are factors, convert
+  ### If any of the variables in the dataframe are factors, convert
   ### them to numeric vectors:
   if ("factor" %in% unlist(lapply(res$input$dat, 'class'))) {
     res$input$dat <- data.frame(lapply(res$input$dat, 'as.numeric'));
@@ -52,11 +52,15 @@ scaleReliability <- function (dat=NULL, items = 'all', digits = 2,
   res$input$silent <- silent;
   res$input$samples <- samples;
   res$input$omega.psych <- omega.psych;
-    
-  ### Also generate a dat (useful when
+  
+  if (samples < res$input$n.observations) {
+    res$intermediate$samples <- samples <- 1.2*res$input$n.observations;
+  }
+
+  ### Also generate a dataframe (useful when
   ### requesting measures for many scales)
   res$output$dat <- data.frame(n.items        = res$input$n.items,
-                                     n.observations = res$input$n.observations);
+                               n.observations = res$input$n.observations);
                                      
   ### Get correlation matrix
   res$intermediate$cor <- cor(res$input$dat, use="complete.obs");

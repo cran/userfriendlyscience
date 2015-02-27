@@ -8,7 +8,7 @@ Freq
 Function to show frequencies in a manner similar to what SPSS' "FREQUENCIES" command does.
 }
 \usage{
-freq(vector, digits = 1, nsmall=1, transposed=FALSE, round=1)
+freq(vector, digits = 1, nsmall=1, transposed=FALSE, round=1, plot=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -26,6 +26,9 @@ freq(vector, digits = 1, nsmall=1, transposed=FALSE, round=1)
   }
   \item{round}{
   Number of digits to round the results to (can be used in conjunction with digits to determine format of results).
+  }
+  \item{plot}{
+  If true, a histogram is shown of the variable.
   }
 }
 \value{

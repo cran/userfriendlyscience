@@ -18,7 +18,7 @@ scaleInspection(dat, items = NULL,
                 rMatrixColsLandscape = 6,
                 pboxWidthMultiplier = 1,
                 scatterPlotBaseSize = 4,
-                pageMargins=15,
+                pageMargins=15, show=FALSE,
                 pval=TRUE)
 makeScales(dat, scales)
 meanConfInt(vector=NULL, mean=NULL, sd=NULL, n=NULL, se=NULL, conf.level=.95)
@@ -92,6 +92,9 @@ which is what pdfLaTexPath should be in that default case.
 }
   \item{pageMargins}{
   Margins of the page in millimeters.
+}
+  \item{show}{
+  Whether to show the results (or only write them to the PDF).
 }
   \item{pval}{
   Whether to print p-values as p-values in correlation matrix.

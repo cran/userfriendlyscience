@@ -1,6 +1,22 @@
 userfriendlyscience NEWS
 ------------------------
 
+
+1.2-0 2015-02-27
+  * New function associationMatrix() added, which takes a list of variables
+    and generates a table with confidence intervals of their effect sizes
+  * New functions freq(), oneway(), and regr() added, which behave similar
+    to SPSS functions to generate frequency tables, oneway anovas, and
+    do simple regression analyses
+  * New function samplingDistribution() added, which allows quick generation
+    of sampling distributions based on frequency information
+  * Added didacticPlot(), which builds plots that are useful for watching
+    what happens when doing null hypothesis significance tests
+  * Added dataShape() so that e1071 is no longer needed for Skewness and Kurtosis
+    in normalityAssessment()
+  * Added associationMatrix, which enables the creation of matrices with
+    effect sizes and their confidence intervals.
+
 1.1-2 2014-04-21
   * testRetestReliability() added to conveniently call both testRetestAlpha()
     and testRetestCES().
@@ -16,7 +32,7 @@ userfriendlyscience NEWS
   * getData() can now also read from .csv, .tsv, .xls, and .xlsx. If
     ROpenOffice from http://omegahat.org is installed, .ods can be read,
     too.
-  * Added is.odd() and is.even() to check whether numbers (or numbers in a vector) are off or even.
+  * Added is.odd() and is.even() to check whether numbers (or numbers in a vector) are odd or even.
 
 1.1.1 2014-04-17
   * Initial Release

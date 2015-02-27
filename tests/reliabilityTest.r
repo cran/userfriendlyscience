@@ -1,4 +1,3 @@
-
 ### Generate an object and store the parameters
 reliabilityExample <- list();
 reliabilityExample$nrOfItems <- 10;
@@ -8,7 +7,8 @@ reliabilityExample$nrOfParticipants <- 250;
 reliabilityExample$nrOfMoments <- 2;
 reliabilityExample$itemErrorVariance <- 9;
 reliabilityExample$transientErrorVariance <- 3;
-reliabilityExample$varianceMultiplierBasis <- .5;
+reliabilityExample$itemVariancesMultiplierBasis <- .5;
+reliabilityExample$itemMeanAdditionBasis <- 10;
 reliabilityExample$seed <- 19811026;
 
 ### Set random seed
@@ -17,14 +17,18 @@ set.seed(reliabilityExample$seed);
 ### Determine itemvariance multiplyer for each item; get a random number
 ### from the normal distribution, then use exp to convert it to a sensible
 ### multiplier.
-reliabilityExample$itemMultipliers <- 
-    exp(rnorm(reliabilityExample$nrOfItems, sd=reliabilityExample$varianceMultiplierBasis));
+reliabilityExample$itemVarianceMultipliers <- 
+  exp(rnorm(reliabilityExample$nrOfItems, sd=reliabilityExample$itemVariancesMultiplierBasis));
+
+### Determine mean adjustment per item
+reliabilityExample$itemMeanDeviations <- 
+  rnorm(reliabilityExample$nrOfItems, sd=reliabilityExample$itemMeanAdditionBasis);
 
 ### Generate the dataframe and each participants' true score
 reliabilityExample$dat <- data.frame(trueScore = 
-  rnorm(reliabilityExample$nrOfParticipants,
-  mean=reliabilityExample$trueScoreMean,
-  sd=sqrt(reliabilityExample$trueScoreVariance)));
+                                       rnorm(reliabilityExample$nrOfParticipants,
+                                             mean=reliabilityExample$trueScoreMean,
+                                             sd=sqrt(reliabilityExample$trueScoreVariance)));
 
 ### Generate items nested within test administrations
 for (currentMoment in 0:(reliabilityExample$nrOfMoments-1)) {
@@ -38,12 +42,38 @@ for (currentMoment in 0:(reliabilityExample$nrOfMoments-1)) {
     ###   a random measurement error with a given variance plus
     ###   a transient error for this moment for this participant
     reliabilityExample$dat[[paste0("t", currentMoment, "_item", currentItem)]] <-
-      reliabilityExample$itemMultipliers[currentItem] *
-        (reliabilityExample$dat$trueScore +
+      reliabilityExample$itemMeanDeviations[currentItem] +
+      reliabilityExample$itemVarianceMultipliers[currentItem] *
+      (reliabilityExample$dat$trueScore +
          rnorm(reliabilityExample$nrOfParticipants, sd = sqrt(reliabilityExample$itemErrorVariance)) +
          currentTransientErrors);
   }
 }
+
+### Remove first column (with true scores) and store
+### dataframe in the somewhat easier-to-use variable 'dat'
+dat <- reliabilityExample$dat[2:(1+reliabilityExample$nrOfItems)];
+
+### Show summaries (make sure to use the 'describe' function from
+### the 'psych' package; the 'Hmisc' package also has one)
+round(psych::describe(dat), 2);
+
+### Order correlation matrix
+round(cor(dat), 2);
+
+### Extract administration at time 1
+dat.time1 <- dat[1:reliabilityExample$nrOfItems];
+
+### Check variables again to verify extraction
+names(dat.time1);
+
+### Order reliabilities for the administration at time1
+### (remove 'ci=FALSE' or set it to true to compute confidence
+###  intervals, as well)
+scaleReliability(dat.time1, ci=FALSE);
+
+### Order more comprehensive scale diagnostics
+scaleDiags <- scaleDiagnosis(dat.time1);
 
 ### Show correlation matrices within each measurement moment
 for (currentMoment in 0:(reliabilityExample$nrOfMoments-1)) {
@@ -114,7 +144,7 @@ print(scaleReliability(reliabilityExample$dat[, itemSelection], ci=FALSE));
 #           file="B:/Data/statistics/R/library/userfriendlyscience/data/testRetestSimData.csv");
 # testRetestSimData <- reliabilityExample$dat;
 # save(testRetestSimData,
-#      file="B:/Data/statistics/R/library/userfriendlyscience/data/testRetestSimData.rda")
+#     file="B:/Data/statistics/R/library/userfriendlyscience/data/testRetestSimData.rda")
 
 ### To save a version without the first column (i.e. without the true score), so that it
 ### can be loaded directly into the functions when providing no arguments, use:

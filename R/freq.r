@@ -22,25 +22,20 @@
 ###########################################################
 ###########################################################
 
-freq <- function(vector, digits = 1, nsmall=1, transposed=FALSE, round=1) {
+freq <- function(vector, digits = 1, nsmall=1, transposed=FALSE, round=1,
+                 plot=FALSE) {
   
   if(length(vector)<2) {
     stop("The first argument is not a vector! Did you make a typing error? Remember that R is case sensitive!");
   }
   
   ### Create object to store results
-  res <- list();
-  res$input <- list();
-  res$intermediate <- list();
+  res <- list(input = as.list(environment()),
+              intermediate = list(),
+              output = list());
   
   ### Store input data
   res$input$vector <- as.factor(vector);  
-  ### Store number of digits
-  res$input$digits <- digits;
-  ### Store minimum number of decimal digits to show
-  res$input$nsmall <- nsmall;
-  ### Store whether to show dataframe transposed or now
-  res$input$transposed <- transposed;
   
   ### Store category names
   res$intermediate$categoryNames <- levels(res$input$vector);
@@ -106,6 +101,10 @@ freq <- function(vector, digits = 1, nsmall=1, transposed=FALSE, round=1) {
     rownames(res$dat) <- tempRowNames;
   }
   
+  if (plot) {
+    res$barChart <- plot(res$intermediate$vector.valid);
+  }
+  
   ## Set object class;
   class(res) <- c("freq");
   return(res);
@@ -143,6 +142,9 @@ print.freq <- function(x, digits=x$input$digits, nsmall=x$input$nsmall,
     rownames(prettyDat) <- rownames(x$dat);
     ### Print result
     print(prettyDat, ...);
+  }
+  if (x$input$plot) {
+    x$barChart;
   }
   invisible();
 }

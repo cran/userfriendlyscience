@@ -86,7 +86,7 @@ makeScales <- function(dat, scales) {
 
 ### This function generates a pdf file with a report
 ### describing the variables.
-scaleInspection <- function(dat, items= NULL,
+scaleInspection <- function(dat, items=NULL,
                             docTitle = "Scale inspection", docAuthor = "Author",
                             pdfLaTexPath, rnwPath=getwd(),
                             filename = "scaleInspection", convertFactors=TRUE,
@@ -94,7 +94,7 @@ scaleInspection <- function(dat, items= NULL,
                             rMatrixColsLandscape = 6,
                             pboxWidthMultiplier = 1,
                             scatterPlotBaseSize = 4,
-                            pageMargins=15,
+                            pageMargins=15, show = FALSE,
                             pval=TRUE) {
 
   if (is.null(items)) {
@@ -102,7 +102,7 @@ scaleInspection <- function(dat, items= NULL,
   }
   
   if (!is.list(items)) {
-    items <- list('none' <- items);
+    items <- list('none' = items);
   }
   if (FALSE %in% sapply(items, is.vector)) {
     ### If this happens, that means there 's non-vector
@@ -137,6 +137,7 @@ scaleInspection <- function(dat, items= NULL,
   res$normality.sampleDist <- list();
   res$normality.samplingDist <- list();
   res$rMatrix <- list();
+  res$show <- show;
   
   res$rnw <- rnwString.initiate(docTitle, docAuthor,
                                 docClassArgs='a4paper,portrait,10pt',
@@ -378,7 +379,7 @@ scaleInspection <- function(dat, items= NULL,
         paste0(res$rnwBit[[currentScale]],
                '\\begin{minipage}{180mm}\n',
                '<< echo=FALSE, warning=FALSE, dev="pdf", fig.width=', figSizeToDraw, ', fig.height=', figSizeToDraw, ', out.width="', figSizeInOutput, '", out.height="', figSizeInOutput, '" >>=\n',
-               'print(res$scaleDiagnosis[["', currentScale, '"]]$ggpairs.combined);\n',
+               'print(res$scaleDiagnosis[["', currentScale, '"]]$scatterMatrix);\n',
                '@\n',
                '<< echo=FALSE, results="asis" >>=\n',
                '@\n',
@@ -403,7 +404,14 @@ scaleInspection <- function(dat, items= NULL,
   rnwString.generate(res$rnw, rnwPath, fileName=filename, pdfLaTexPath);
   
   ### Store result for later inspection
-  class(res) <- c('itemInspection');
+  class(res) <- c('scaleInspection');
   return(res);
   
+}
+
+print.scaleInspection <- function (x, show=x$show, ...) {
+  if (show) {
+    print(x, ...);
+  }
+  invisible();
 }

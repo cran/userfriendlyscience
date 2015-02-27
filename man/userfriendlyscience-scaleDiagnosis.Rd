@@ -8,7 +8,8 @@ scaleDiagnosis provides a number of diagnostics for a scale (an aggregative meas
 }
 \usage{
 scaleDiagnosis(dat=NULL, items=NULL, plotSize=180, sizeMultiplier = 1,
-               axisLabels = "none", scaleReliability.ci=FALSE, conf.level=.95) 
+               axisLabels = "none", scaleReliability.ci=FALSE, conf.level=.95,
+               powerHist=TRUE, ...) 
 }
 \arguments{
   \item{dat}{
@@ -34,6 +35,12 @@ scaleDiagnosis(dat=NULL, items=NULL, plotSize=180, sizeMultiplier = 1,
   \item{conf.level}{
   Confidence of confidence intervals for reliability estimates (if requested with scaleReliability.ci).
 }
+  \item{powerHist}{
+  Whether to use the default ggpairs histogram on the diagonal of the scattermatrix, or whether to use the powerHist version.
+}
+  \item{...}{
+  Additional arguments are passed on to powerHist.
+}
 }
 \details{
 
@@ -47,14 +54,14 @@ An object with the input and several output variables. Most notably:
   \item{pca}{A Principal Components Analysis}
   \item{fa}{A Factor Analysis}
   \item{describe}{Decriptive statistics about the items}
-  \item{ggpairs.combined}{A scattermatrix with histograms on the diagonal and correlation coefficients in the upper right half.}
+  \item{scatterMatrix}{A scattermatrix with histograms on the diagonal and correlation coefficients in the upper right half.}
 }
 \examples{
-
+### Note: the 'not run' is simply because running takes a lot of time,
+###       but these examples are all safe to run!
 \dontrun{
 ### This will prompt the user to select an SPSS file
 scaleDiagnosis();
-}
 
 ### Generate a datafile to use
 exampleData <- data.frame(item1=rnorm(100));
@@ -63,12 +70,12 @@ exampleData$item3 <- exampleData$item1+rnorm(100);
 exampleData$item4 <- exampleData$item2+rnorm(100);
 exampleData$item5 <- exampleData$item2+rnorm(100);
 
-### Use all items
-scaleDiagnosis(dat=exampleData);
-
 ### Use a selection of two variables
 scaleDiagnosis(dat=exampleData, items=c('item2', 'item4'));
 
+### Use all items
+scaleDiagnosis(dat=exampleData);
+}
 }
 \keyword{ utilities }
 \keyword{ univar }

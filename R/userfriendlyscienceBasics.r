@@ -11,11 +11,16 @@
 
 ### This function checks whether a package is installed;
 ### if not, it installs it. It then loads the package.
-safeRequire <- function(packageName) {
+safeRequire <- function(packageName, mirrorIndex=NULL) {
   if (!is.element(packageName, installed.packages()[,1])) {
-    install.packages(packageName);
+    if (!is.null(mirrorIndex)) {
+      chooseCRANmirror(ind=mirrorIndex);
+    }
+    install.packages(packageName, dependencies=TRUE);
   }
-  require(package = packageName, character.only=TRUE);
+  suppressPackageStartupMessages(require(package = packageName,
+                                         character.only=TRUE,
+                                         quietly=TRUE));
 }
 
 ### trim simply trims spaces from the start and end of a string
@@ -32,6 +37,24 @@ trim <- function(str) {
 ### Function to remove zero at start of number
 noZero <- function (str) {
   return(gsub("0\\.", ".", str));  
+}
+
+### Function to format p values nicely
+formatPvalue <- function (values, digits = 3, spaces=TRUE, includeP = TRUE) {
+  missingValues <- is.na(values);
+  pchar <- ifelse(includeP, "p = ", "");
+  eps <- 10 ^ -digits;
+  res <- paste0(pchar, noZero(format.pval(round(values, digits),
+                                          eps=eps, digits=digits,
+                                          scientific=digits+1)));
+  if (spaces) {
+    res <- gsub("= <", "< ", res);
+  } else {
+    res <- gsub("= <", "<", res);
+    res <- gsub(" ", "", res);
+  }
+  res <- ifelse(missingValues, NA, res);
+  return(res);
 }
 
 ### Function to format Pearson r
@@ -102,8 +125,10 @@ is.even <- function(vector) {
 
 ### Convert a vector to numeric values and trying to be smart about it.
 convertToNumeric <- function (vector, byFactorLabel = FALSE) {
-  if (!is.vector(vector)) {
-    stop("Argument 'vector' must be a vector! To mass convert e.g. a dataframe, ",
+  if (!(is.factor(vector) | is.numeric(vector) |
+          is.character(vector) | is.logical(vector))) {
+    stop("Argument 'vector' must be a vector! Current class = '",
+         class(vector), "'. To mass convert e.g. a dataframe, ",
          "use massConvertToNumber.");
   }
   if(is.factor(vector) && byFactorLabel) {
@@ -130,4 +155,9 @@ massConvertToNumeric <- function (dat, byFactorLabel = FALSE, ignoreCharacter = 
       return(convertToNumeric(x, byFactorLabel = byFactorLabel));
     }
   })));
+}
+
+### Case insensitive '%in' variant
+`%IN%` <- function(x, y) {
+  toupper(x) %in% toupper(y);
 }
