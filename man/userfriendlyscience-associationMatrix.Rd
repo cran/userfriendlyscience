@@ -14,8 +14,7 @@ associationMatrix(dat=NULL, x=NULL, y=NULL, conf.level = .95,
                   correction = "fdr", bootstrapV=FALSE,
                   info=c("full", "ci", "es"),
                   bootstrapV.samples = 5000, digits = 2,
-                  pval=FALSE,
-                  colNames = FALSE,
+                  pValueDigits = digits + 1, colNames = FALSE,
                   type=c("R", "html", "latex"), file="",
                   statistic = associationMatrixStatDefaults,
                   effectSize = associationMatrixESDefaults)
@@ -64,11 +63,9 @@ associationMatrix(dat=NULL, x=NULL, y=NULL, conf.level = .95,
   \item{digits}{
   Number of digits to round to when printing the results.
 }
-  \item{pval}{
-  Determines whether format.pval is used to display the p-value.
-  This will add three characters to the width of columns in case
-  p-values require scientific notation.
-}
+  \item{pValueDigits}{
+  How many digits to use for formatting the p values.
+  }
   \item{colNames}{
   If true, the column heading will use the variables names instead of
   numbers.

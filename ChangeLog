@@ -1,11 +1,21 @@
 
-(version 1.2-0)
+(version 0.2-1)
+(2015-03-23)
+
+getDat added to automatically create a dataframe
+Minor additions to the conversion functions
+Added and implemented formatPvalue for cleaner p value formatting
+Exported the case insensitive %IN%
+
+(version 0.2-0)
+(2015-02-27)
+
 Added regr() and oneway()
 Added samplingDistribution() and didacticPlot()
 Added dataShape() so that e1071 is no longer needed for Skewness and Kurtosis in normalityAssessment()
 Added associationMatrix()
 
-(version 1.1-2)
+(version 0.1-2)
 
 (Mon Apr 21 21:56:57 2014)
 getData improved to read more filetypes
@@ -19,7 +29,7 @@ meanDiff.multi improved to generate a forest plot by default, with line at zero 
 dlvPlot improved to show better confidence intervals and take confidence level into account
 rMatrrix now uses conf.level argument to construct confidence intervals
 
-(version 1.1-1)
+(version 0.1-1)
 
 (Tue Apr 17 18:23:00 2014)
 Initial Release

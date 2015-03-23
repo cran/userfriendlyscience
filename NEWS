@@ -1,8 +1,13 @@
 userfriendlyscience NEWS
 ------------------------
 
+0.2-1 2015-03-23
+  * getDat added to automatically create a dataframe
+  * Minor additions to the conversion functions
+  * Added and implemented formatPvalue for cleaner p value formatting
+  * Exported the case insensitive %IN%
 
-1.2-0 2015-02-27
+0.2-0 2015-02-27
   * New function associationMatrix() added, which takes a list of variables
     and generates a table with confidence intervals of their effect sizes
   * New functions freq(), oneway(), and regr() added, which behave similar
@@ -17,7 +22,7 @@ userfriendlyscience NEWS
   * Added associationMatrix, which enables the creation of matrices with
     effect sizes and their confidence intervals.
 
-1.1-2 2014-04-21
+0.1-2 2014-04-21
   * testRetestReliability() added to conveniently call both testRetestAlpha()
     and testRetestCES().
   * testRetestAlpha() and testRetestCES() added to compute the test-retest
@@ -34,5 +39,5 @@ userfriendlyscience NEWS
     too.
   * Added is.odd() and is.even() to check whether numbers (or numbers in a vector) are odd or even.
 
-1.1.1 2014-04-17
+0.1.1 2014-04-17
   * Initial Release

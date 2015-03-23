@@ -1,6 +1,7 @@
 \name{basicSPSStranslationFunctions}
 \alias{basicSPSStranslationFunctions}
 \alias{getData}
+\alias{getDat}
 \alias{filterBy}
 \alias{useAll}
 \alias{mediaan}
@@ -14,6 +15,7 @@ Basic functons to make working with R easier for SPSS users: getData provides an
 \usage{
 getData(filename=NULL, errorMessage = "[defaultErrorMessage]",
         use.value.labels=TRUE, to.data.frame=TRUE, stringsAsFactors=TRUE, ...)
+getDat(dfName="dat", backup=TRUE, ...)
 filterBy(dat, expression, replaceOriginalDataframe = TRUE, envir = parent.frame())
 useAll(dat, replaceFilteredDataframe = TRUE)
 mediaan(vector)
@@ -40,6 +42,13 @@ modus(vector)
   \item{...}{
   Additional options, passed on to the function used to import the data (which depends on the extension of the file).
 }
+  \item{dfName}{
+  The name of the dataframe to create in the parent environment.
+}
+  \item{backup}{
+  Whether to backup an object with name \code{dfName}, if one already exists
+  in the parent environment.
+}
   \item{dat}{
   Dataframe to process: for filterBy, dataframe to filter rows from; for useAll, dataframe to restore ('unfilter').
 }
@@ -62,6 +71,13 @@ modus(vector)
 \value{
 
 getData returns the imported dataframe, with the filename from which it was read stored in the 'filename' attribute.
+
+getDat is a simple wrapper for \code{getData()} which creates a dataframe in
+the parent environment, by default with the name 'dat'. Therefore, calling
+\code{getDat()} in the console will allow the user to select a file, and
+the data from the file will then be read and be available as 'dat'. If an
+object with \code{dfName} (i.e. 'dat' by default) already exists, it will
+be backed up with a warning. \code{getDat()} therefore returns nothing.
 
 mediaan returns the median, or, in the case of a factor where the median is in between two categories, both categories.
 

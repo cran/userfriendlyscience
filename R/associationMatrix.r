@@ -257,8 +257,7 @@ associationMatrix <- function(dat=NULL, x=NULL, y=NULL, conf.level = .95,
                               correction = "fdr", bootstrapV=FALSE,
                               info=c("full", "ci", "es"),
                               bootstrapV.samples = 5000, digits = 2,
-                              pval=FALSE,
-                              colNames = FALSE,
+                              pValueDigits=digits + 1, colNames = FALSE,
                               type=c("R", "html", "latex"), file="",
                               statistic = associationMatrixStatDefaults,
                               effectSize = associationMatrixESDefaults) {
@@ -447,7 +446,8 @@ associationMatrix <- function(dat=NULL, x=NULL, y=NULL, conf.level = .95,
   for(curXvar in x) {
     for(curYvar in y) {
       if (!is.null(res$intermediate$statistics[[curXvar]][[curYvar]]$p.raw)) {
-        res$intermediate$statistics[[curXvar]][[curYvar]]$p.adj <- res$intermediate$pvalMatrix.adj[curXvar, curYvar];
+        res$intermediate$statistics[[curXvar]][[curYvar]]$p.adj <-
+          res$intermediate$pvalMatrix.adj[curXvar, curYvar];
       }
     }
   }
@@ -468,8 +468,8 @@ associationMatrix <- function(dat=NULL, x=NULL, y=NULL, conf.level = .95,
                round(res$intermediate$effectSizes[[rowVar]][[colVar]]$ci[2], digits), "]");
         res$output$matrix$es[rowVar, colVar] <-
           paste0(substr(res$intermediate$effectSizes[[rowVar]][[colVar]]$es.type, 1, 1), "=",
-                 round(res$intermediate$effectSizes[[rowVar]][[colVar]]$es, digits), ", p=",
-                 round(res$intermediate$statistics[[rowVar]][[colVar]]$p.adj, digits));
+                 round(res$intermediate$effectSizes[[rowVar]][[colVar]]$es, digits), ", ",
+                 formatPvalue(res$intermediate$statistics[[rowVar]][[colVar]]$p.adj, digits=pValueDigits, spaces=FALSE));
         ### Convert x (row variable) to two row indices in combined matrix
         res$output$matrix$full[(rowVar*2)-1, colVar] <-
           res$output$matrix$ci[rowVar, colVar];
@@ -512,7 +512,7 @@ print.associationMatrix <- function (x, type = x$input$type,
     ### for html and LaTeX
     if ((tolower(type[1])=="latex") && (info[1]=='full')) {
       rownames(matrixToPrint)[seq(2, nrow(matrixToPrint), by=2)] <-
-        paste0("%%% Variable ", 1:(nrow(matrixToPrint)/2));
+        paste0("%%% Variable ", 1:(nrow(matrixToPrint)/2), "\n");
     } else if (info[1]=='full') {
       rownames(matrixToPrint)[seq(2, nrow(matrixToPrint), by=2)] <-
         paste0("<!-- Variable ", 1:(nrow(matrixToPrint)/2), " -->");

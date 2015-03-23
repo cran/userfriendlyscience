@@ -24,7 +24,7 @@ If the terms in the formula aren't vectors but variable names, this should
 be the dataframe where those variables are stored.
 }
   \item{conf.level}{
-The confidence of the confidence interval around the regression coefficients.\
+The confidence of the confidence interval around the regression coefficients.
 }
   \item{digits}{
 Number of digits to round the output to.

@@ -1,4 +1,5 @@
 exportPattern("^[[:alpha:]]+");
+export("%IN%");
 
 S3method(print, dlvPlot);
 S3method(print, freq);

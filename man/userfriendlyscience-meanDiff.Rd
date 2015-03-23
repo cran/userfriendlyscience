@@ -8,7 +8,7 @@ meanDiff
 The meanDiff function compares the means between two groups. It computes Cohen's d, the unbiased estimate of Cohen's d (Hedges' g), and performs a t-test. It also shows the achieved power, and, more usefully, the power to detect small, medium, and large effects.
 }
 \usage{
-meanDiff(x, y=NULL, paired = FALSE, var.equal = "test",
+meanDiff(x, y=NULL, paired = FALSE, r.prepost = NULL, var.equal = "test",
          conf.level = .95, digits = 2, envir = parent.frame())
 }
 %- maybe also 'usage' for other objects documented here.
@@ -21,6 +21,23 @@ meanDiff(x, y=NULL, paired = FALSE, var.equal = "test",
 }
   \item{paired}{
   Boolean; are x & y independent or dependent? Note that if x & y are dependent, they need to have the same length.
+}
+  \item{r.prepost}{
+  Correlation between the pre- and post-test in the case of a paired samples
+  t-test. This is required to compute Cohen's d using the formula on page
+  29 of Borenstein et al. (2009). If NULL, the correlation is simply
+  computed from the provided scores (but of course it will then be lower
+  if these is an effect - this will lead to an underestimate of the
+  within-groups variance, and therefore, of the standard error of Cohen's d,
+  and therefore, to confidence intervals that are too narrow (too liberal).
+  Also, of course, when using this data to compute the within-groups
+  correlation, random variations will also impact that correlation, which
+  means that confidence intervals may in practice deviate from the null
+  hypothesis significance testing p-value in either direction (i.e. the
+  p-value may indicate a significant association while the confidence
+  interval contains 0, or the other way around). Therefore, if the
+  test-retest correlation of the relevant measure is known, please provide
+  this here to enable computation of accurate confidence intervals.
 }
   \item{var.equal}{
   String; only relevant if x & y are independent; can be "test" (default; test whether x & y have different variances), "no" (assume x & y have different variances; see the Warning below!), or "yes" (assume x & y have the same variance)

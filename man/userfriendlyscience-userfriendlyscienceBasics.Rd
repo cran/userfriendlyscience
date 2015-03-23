@@ -12,6 +12,7 @@
 \alias{is.even}
 \alias{convertToNumeric}
 \alias{massConvertToNumeric}
+\alias{\%IN\%}
 \title{
 userfriendlyscience basics
 }
@@ -31,7 +32,7 @@ is.odd(vector)
 is.even(vector)
 convertToNumeric(vector, byFactorLabel = FALSE)
 massConvertToNumeric(dat, byFactorLabel = FALSE, ignoreCharacter = TRUE)
-
+find \%IN\% table
 }
 \arguments{
   \item{packageName}{
@@ -96,6 +97,12 @@ The number of times to repeat the string.
   \item{ignoreCharacter}{
   If TRUE, character vectors are ignored. If FALSE, character vectors are converted (or, an attempt is made :-)).
   }
+  \item{find}{
+  The element(s) to look up in the vector or matrix.
+  }
+  \item{table}{
+  The vector or matrix in which to look up the element.
+  }
 }
 \details{
 The safeRequire function checks whether a package is already installed. If so, it loads the package (using require/library). If not, it first installs it, and then loads it.
@@ -104,7 +111,10 @@ The trim function removes whitespaces from the start and end of a text string.
 
 The noZero function removes the first zero from a string that was originally a number.
 
-The 
+The formatPvalue function formats a P value, roughly according to APA
+style guidelines. This means that the noZero is used to remove the zero
+preceding the decimal point, and p values that would round to zero given
+the requested number of digits are shown as e.g. p<.001.
 
 The formatR function format a Pearson correlation for pretty printing (using noZero).
 
@@ -116,17 +126,21 @@ The invertItem function 'unmirrors' an inverted item (i.e. for a 1-3 item, 1 bec
 
 is.odd and is.even check whether a number is, or numbers in a vector are, odd or even.
 
+The infix function \%IN\% is a case-insensitive version of \code{\link{\%in\%}}.
+
 }
 \value{
 safeRequire returns nothing.
 
-trim, noZero, formatR, and repeatStr return a string.
+trim, formatPvalue, noZero, formatR, and repeatStr return a string.
 
 ifelseObj return an object.
 
 The invertItem function returns the inverted item vector, with an attribute "inverted" set to TRUE.
 
 is.odd and is.even return a logical vector.
+
+\%IN\% returns a logical vector of the same length as its first argument.
 
 }
 \examples{

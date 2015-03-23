@@ -10,14 +10,14 @@ This package contains a number of functions that serve
   two goals: first, make R more accessible to people migrating from
   SPSS by adding a number of functions that behave roughly like their
   SPSS equivalents; and second, make a number of slightly more
-  advanced functions more userfriendly to relatively novice users.
+  advanced functions more user friendly to relatively novice users.
 }
 \details{
 \tabular{ll}{
 Package: \tab userfriendlyscience\cr
 Type: \tab Package\cr
-Version: \tab 0.1-3\cr
-Date: \tab 2014-09-08\cr
+Version: \tab 0.2-1\cr
+Date: \tab 2015-03-23\cr
 License: \tab GPL (>= 2)\cr
 }
 The package contains a variety of functions designed to make life easier. These functions are geared towards researchers in psychology.

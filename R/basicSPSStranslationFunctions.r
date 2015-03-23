@@ -4,8 +4,13 @@ getData <- function(filename=NULL,
                     to.data.frame=TRUE,
                     stringsAsFactors=TRUE, ...) {
   
+  dots <- list(...);
+  fullArguments <- as.list(environment());
+  matchedCall <- match.call();
+  fullCall <- capture.output(print(matchedCall));
+  
   ### File formats that have been implemented
-  supportedFormats <- c(".sav", ".csv", ".tsv", ".ods", ".xls", "xlsx");
+  supportedFormats <- c(".sav", ".csv", ".tsv", ".rda", ".ods", ".xls", "xlsx");
   
   ### Set error message
   errorMessage <- sub("\\[defaultErrorMessage\\]",
@@ -16,9 +21,34 @@ getData <- function(filename=NULL,
   
   if (is.null(filename)) {
     ### If no filename is specified, request one from the user
+    cat("You did not specify a file to open. Therefore, please select the",
+        "file to open in the File Selection Dialog.",
+        "Note that this dialog can sometimes appear behind the R window.",
+        "If you do not see the file dialog now, check the start bar",
+        "(in Windows) or the dock (in *nux based systems such as",
+        "Ubuntu or OS X).");
     filename <- file.choose();
+    slashesFilename <- gsub("\\", "/", filename, fixed=TRUE);
+    
+    if (length(matchedCall) == 1) {
+      filenameArgument <- sub('getData(', paste0('getData(filename="',
+                                                 trim(slashesFilename), '"'),
+                              fullCall, fixed=TRUE);
+    } else {
+      filenameArgument <- sub('getData(', paste0('getData(filename="',
+                                                 trim(slashesFilename), '", '),
+                              fullCall, fixed=TRUE);
+    }
+    
+    filenameArgument <- gsub(", ", ",\n        ", filenameArgument, fixed=TRUE);
+    
+    cat("\n\nYou have selected a file. Based on your call and the filename",
+        "and directory (path) you selected, this is the",
+        "command you can use to read the datafile without",
+        "a dialog, for example in an R script:\n\n");
+    cat(filenameArgument, ";\n\n", sep="");
   }
-
+  
   extension <- tolower(substring(filename, nchar(filename) - 3));
 
   if (!file.exists(filename) |
@@ -27,9 +57,14 @@ getData <- function(filename=NULL,
     stop(errorMessage);
   }
   else {
+    if (extension == ".rda") {
+      dat <- load(filename);
+      dat <- get(dat);
+    }
     if (extension == ".sav") {
       dat <- suppressWarnings(read.spss(filename, use.value.labels=use.value.labels,
                               to.data.frame=to.data.frame, ...));
+      
 #       dat <- read.spss(filename, use.value.labels=use.value.labels,
 #                        to.data.frame=to.data.frame, ...);
 #       cat("Note that a warning like 'Unrecognized record type 7, subtype ## encountered in system file'",
@@ -77,7 +112,7 @@ getData <- function(filename=NULL,
       if (!is.element('XLConnect', installed.packages()[, 1])) {
          stop("To load Excel (.xls or .xlsx) files, I need package 'XLConnect', ",
               "which in turn requires Java. Please install it yourself if you wish to ",
-              "use this. You can insstall it using:\n\n",
+              "use this. You can install it using:\n\n",
               "install.packages('XLConnect')\n\nOf course, you can always export from ",
               "Excel to .csv (comma separated values) and load that file.");
       }
@@ -88,7 +123,7 @@ getData <- function(filename=NULL,
 		} else {
          stop("To load Excel (.xls or .xlsx) files, I need package 'XLConnect', ",
               "which in turn requires Java. Please install it yourself if you wish to ",
-              "use this. You can insstall it using:\n\n",
+              "use this. You can install it using:\n\n",
               "install.packages('XLConnect')\n\nOf course, you can always export from ",
               "Excel to .csv (comma separated values) and load that file.");
 		}
@@ -97,9 +132,31 @@ getData <- function(filename=NULL,
     
     ### Store the file where we got this dataframe
     attr(dat, "fileName") <- filename;
+    ### Store the call
+    attr(dat, "getDataCall") <- filenameArgument;
+    
     ### Return the resuls
     return(dat);
   }  
+}
+
+getDat <- function(dfName="dat", backup=TRUE, ...) {
+  dat <- getData(...);
+  if (exists(dfName, envir=sys.frame(-1)) && backup) {
+    backupName <- paste0(dfName, '_backup_',
+                         format(Sys.time(), "%Y%m%d_%H%M%S"));
+    assign(backupName,
+           value=get(dfName, envir=sys.frame(-1)),
+           envir=sys.frame(-1));
+    warning("NOTE: an object called '", dfName, "' already existed; I renamed ",
+            "it to '", backupName, "'.");
+  }
+  assign(dfName, value=dat, envir=sys.frame(-1));
+  cat("The data has been stored in a dataframe called '",
+      dfName, "'. That means that if you want to repeat this command and ",
+      "store the dataframe with the same name, you have to use:\n\n",
+      dfName, " <- ", attributes(dat)$getDataCall, ";\n\n",      
+      sep="");
 }
 
 mediaan <- function(vector) {

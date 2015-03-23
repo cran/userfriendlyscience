@@ -138,7 +138,18 @@ print.oneway <- function(x, digits=x$input$digits,
   
   if (!is.null(x$input$posthoc)) {
     cat(paste0("\n### Post hoc test: ", x$input$posthoc,"\n"));
-    print(x$intermediate$posthoc, digits=digits);
+    if (x$input$posthoc %in% c('tukey', 'games-howell')) {
+      x$intermediate$posthoc <- lapply(list(x$intermediate$posthoc), function(x) {
+        x[, 1:ncol(x)-1] <- round(x[, 1:ncol(x)-1], digits);
+        x[, ncol(x)] <- formatPvalue(x[,ncol(x)], digits=digits+1, includeP=FALSE);
+        return(x);
+      });
+      print(x$intermediate$posthoc, quote=FALSE);
+    }
+    else {
+      x$intermediate$posthoc$p.value <- formatPvalue(x$intermediate$posthoc$p.value, digits=pvalueDigits, includeP=FALSE);
+      print(x$intermediate$posthoc$p.value, quote=FALSE, na.print="");
+    }
   }
   
 }

@@ -94,17 +94,18 @@ invertItem <- function(item, range=NULL, ignorePreviousInversion = FALSE) {
   ### Check whether this was already inverted
   if (!is.null(attr(item, "inverted"))) {
     if ((attr(item, "inverted") == TRUE) & !(ignorePreviousInversion)) {
-      stop("This vector has already been inverted! Set ignorePreviousInversion to TRUE to override this check and invert the factor anyway.");
+      warning("Vector '", substitute(deparse(item)),
+              "' has already been inverted! Set ignorePreviousInversion to TRUE to override this check and invert the vector anyway.");
     }
   }
   
   ### Not inverted yet (or ignorePreviousInversion set to TRUE)
   if (is.numeric(item)) {
-    if (is.null(range) | (length(range) != 2)) {
+    if (is.null(range)) {
       res <- sum(range(item)) - item;
     }
     else {
-      res <- sum(range) - item;
+      res <- sum(range(range)) - item;
     }
   }
   else {
@@ -158,6 +159,6 @@ massConvertToNumeric <- function (dat, byFactorLabel = FALSE, ignoreCharacter = 
 }
 
 ### Case insensitive '%in' variant
-`%IN%` <- function(x, y) {
-  toupper(x) %in% toupper(y);
+`%IN%` <- function(find, table) {
+  return(toupper(find) %in% toupper(table));
 }

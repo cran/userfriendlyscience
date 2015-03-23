@@ -15,8 +15,8 @@
 ### Define functions
 ###########################################################
 
-meanDiff <- function(x, y=NULL, paired = FALSE, var.equal = "test",
-                     conf.level = .95, digits = 2,
+meanDiff <- function(x, y=NULL, paired = FALSE, r.prepost = NULL,
+                     var.equal = "test", conf.level = .95, digits = 2,
                      envir = parent.frame()) {
   
   ### Check basic arguments
@@ -160,8 +160,13 @@ meanDiff <- function(x, y=NULL, paired = FALSE, var.equal = "test",
     res$objects$t_test <- t.test(x, y, paired = TRUE);
     
     ### Correlation between both variables; we'll need it
-    ### for Cohen's d (see Borenstein et al., p. 29)
-    res$correlation <- cor(x, y);
+    ### for Cohen's d (see Borenstein et al., p. 29). If provided, use that
+    ### estimate; otherwise, compute it.
+    if (is.null(r.prepost)) {
+      res$correlation <- cor(x, y);
+    } else {
+      res$correlation <- r.prepost;
+    }
     
     ### Standard deviation of the difference (again, see p. 29)
     res$diff.sd <- sqrt(var(x - y));

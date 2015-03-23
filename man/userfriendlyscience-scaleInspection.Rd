@@ -109,7 +109,7 @@ which is what pdfLaTexPath should be in that default case.
   Standard deviaton to use when computing confidence intervals (when no vector is provided).
 }
   \item{n}{
-  Number of datapoints to base confidence intervals on.\
+  Number of datapoints to base confidence intervals on.
 }
   \item{se}{
   Standard errorto use when computing confidence intervals (when no standard deviation or vector is provided).
