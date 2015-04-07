@@ -16,8 +16,8 @@ This package contains a number of functions that serve
 \tabular{ll}{
 Package: \tab userfriendlyscience\cr
 Type: \tab Package\cr
-Version: \tab 0.2-1\cr
-Date: \tab 2015-03-23\cr
+Version: \tab 0.2-2\cr
+Date: \tab 2015-04-07\cr
 License: \tab GPL (>= 2)\cr
 }
 The package contains a variety of functions designed to make life easier. These functions are geared towards researchers in psychology.

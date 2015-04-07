@@ -8,6 +8,7 @@ getData <- function(filename=NULL,
   fullArguments <- as.list(environment());
   matchedCall <- match.call();
   fullCall <- capture.output(print(matchedCall));
+  filenameArgument <- filename;
   
   ### File formats that have been implemented
   supportedFormats <- c(".sav", ".csv", ".tsv", ".rda", ".ods", ".xls", "xlsx");
@@ -129,7 +130,7 @@ getData <- function(filename=NULL,
 		}
       }
     }
-    
+
     ### Store the file where we got this dataframe
     attr(dat, "fileName") <- filename;
     ### Store the call

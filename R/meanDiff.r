@@ -16,8 +16,8 @@
 ###########################################################
 
 meanDiff <- function(x, y=NULL, paired = FALSE, r.prepost = NULL,
-                     var.equal = "test", conf.level = .95, digits = 2,
-                     envir = parent.frame()) {
+                     var.equal = "test", conf.level = .95, plot = FALSE,
+                     digits = 2, envir = parent.frame()) {
   
   ### Check basic arguments
   if (!is.logical(paired) || length(paired) != 1) {
@@ -215,7 +215,7 @@ meanDiff <- function(x, y=NULL, paired = FALSE, r.prepost = NULL,
     ### Test for equal variances if necessary
     if (!paired & (var.equal == "test")) {
       res$objects$equal.var_test <- var.test(x, y);
-      res$type = paste0(res$type, "tested for equal variances, p = ", format.pval(res$objects$equal.var_test$p.value, digits=3), ", so ");
+      res$type = paste0(res$type, "tested for equal variances, ", formatPvalue(res$objects$equal.var_test$p.value, digits=3), ", so ");
       if (res$objects$equal.var_test$p.value < .05) {
         var.equal <- "no";
       }
@@ -300,6 +300,14 @@ meanDiff <- function(x, y=NULL, paired = FALSE, r.prepost = NULL,
   res$df <- res$objects$t_test$parameter;
   res$p  <- res$objects$t_test$p.value;
   
+  ### Generate plot, if requested
+  if (plot) {
+    tmpDat <- data.frame(dependent = c(x, y),
+                         groups = c(rep(groupNames[1], length(x)),
+                                    rep(groupNames[2], length(y))));
+    res$dlvPlot <- dlvPlot(tmpDat, x="groups", y="dependent");
+  }
+  
   ### Set class & return result
   class(res) <- c("meanDiff");
   return(res);
@@ -340,10 +348,16 @@ print.meanDiff <- function (x, digits=x$digits, powerDigits=x$digits + 2, ...) {
              " (Hedges g point estimate:  ", round(x$meanDiff.g, digits), ")",
            "\n\n",
            powerInfo,
-           "\n\n(secondary information (NHST): t[", round(x$df, digits), "] = ", round(x$t, digits), ", p = ", format.pval(x$p, digits=digits), ")\n"));
+           "\n\n(secondary information (NHST): t[", round(x$df, digits), "] = ", round(x$t, digits), ", ", formatPvalue(x$p, digits=digits+1), ")\n"));
   if (regexpr("unequal variances", x$type) > -1) {
     cat(paste0("NOTE: because the t-test is based on unequal variances, the ",
-               "NHST p-value may be inconsistent with the confidence interval!"));
+               "NHST p-value may be inconsistent with the confidence interval! ",
+               "Use parameter 'var.equal = TRUE' to force equal variances."));
   }
+  
+  if (!is.null(x$dlvPlot)) {
+    print(x$dlvPlot);
+  }
+  
   invisible();
 }

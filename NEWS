@@ -1,6 +1,11 @@
 userfriendlyscience NEWS
 ------------------------
 
+0.2-2 2015-04-07
+  * Error in getData, that was introduced when it was changed to work better with getDat, corrected
+  * Way eta^2 is computed in oneway corrected
+  * A plot can now automatically be ordered when using meanDiff
+
 0.2-1 2015-03-23
   * getDat added to automatically create a dataframe
   * Minor additions to the conversion functions

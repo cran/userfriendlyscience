@@ -9,7 +9,7 @@ The meanDiff function compares the means between two groups. It computes Cohen's
 }
 \usage{
 meanDiff(x, y=NULL, paired = FALSE, r.prepost = NULL, var.equal = "test",
-         conf.level = .95, digits = 2, envir = parent.frame())
+         conf.level = .95, plot = FALSE, digits = 2, envir = parent.frame())
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -44,6 +44,9 @@ meanDiff(x, y=NULL, paired = FALSE, r.prepost = NULL, var.equal = "test",
 }
   \item{conf.level}{
   Confidence of confidence intervals you want.
+}
+  \item{plot}{
+  Whether to print a dlvPlot.
 }
   \item{digits}{
   With what precision you want the results to print.

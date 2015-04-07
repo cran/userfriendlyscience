@@ -71,7 +71,7 @@ oneway <- function(y, x, posthoc=NULL, means=FALSE, fullDescribe=FALSE,
                                                     conf.level=conf.level);
   
   res$output <- list(etasq = res$intermediate$Anova$`Sum Sq`[2] /
-                       res$intermediate$Anova$`Sum Sq`[3],
+                       sum(res$intermediate$Anova$`Sum Sq`[2:3]),
                      etasq.ci = res$intermediate$etasq$ci);
   
   res$output$dat <- data.frame(SS = res$intermediate$Anova$`Sum Sq`[2:3],

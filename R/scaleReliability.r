@@ -4,10 +4,9 @@ scaleReliability <- function (dat=NULL, items = 'all', digits = 2,
                               omega.psych = FALSE) {
 
   ### Make object to store results
-  res <- list();
-  res$input <- list();
-  res$intermediate <- list();
-  res$output <- list();
+  res <- list(input = as.list(environment()),
+              intermediate = list(),
+              output = list());
   
   ### If no dataframe was specified, load it from an SPSS file
   if (is.null(dat)) {
@@ -43,15 +42,9 @@ scaleReliability <- function (dat=NULL, items = 'all', digits = 2,
     res$input$dat <- data.frame(lapply(res$input$dat, 'as.numeric'));
   }
 
+  ### Set number of items and number of observations
   res$input$n.items <- ncol(res$input$dat);
   res$input$n.observations <- nrow(res$input$dat);
-  res$input$items <- items;
-  res$input$digits <- digits;
-  res$input$ci <- ci;
-  res$input$conf.level <- conf.level;
-  res$input$silent <- silent;
-  res$input$samples <- samples;
-  res$input$omega.psych <- omega.psych;
   
   if (samples < res$input$n.observations) {
     res$intermediate$samples <- samples <- 1.2*res$input$n.observations;
@@ -147,11 +140,13 @@ scaleReliability <- function (dat=NULL, items = 'all', digits = 2,
 }
 
 print.scaleReliability <- function (x, digits=x$input$digits, ...) {
-  cat(paste0("                 dat: ", x$input$dat.name,
+  
+  cat(paste0("                       dat: ", x$input$dat.name,
              "\n                     Items: ", paste(x$input$items, collapse=", "),
              "\n              Observations: ", x$input$n.observations));
   if (x$input$n.items > 2) {
-    cat(paste0("\n                     Omega: ", round(x$output$omega, digits=digits)));
+    
+    cat("\n                     Omega:", round(x$output$omega, digits=digits));
     if (x$input$omega.psych) {
       cat(paste0("\nOmega (from psych package): ", round(x$output$omega.psych, digits=digits)));
     }
