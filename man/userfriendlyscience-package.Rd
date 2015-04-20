@@ -16,8 +16,8 @@ This package contains a number of functions that serve
 \tabular{ll}{
 Package: \tab userfriendlyscience\cr
 Type: \tab Package\cr
-Version: \tab 0.2-2\cr
-Date: \tab 2015-04-07\cr
+Version: \tab 0.3-0\cr
+Date: \tab 2015-04-16\cr
 License: \tab GPL (>= 2)\cr
 }
 The package contains a variety of functions designed to make life easier. These functions are geared towards researchers in psychology.
@@ -37,7 +37,7 @@ dat$group <- factor(dat$group);
 normalityAssessment(dat$weight);
 
 ### Compute mean difference and show it
-meanDiff(dat$weight ~ dat$group);
+meanDiff(dat$weight ~ dat$group, plot=TRUE);
 
 ### Show the t-test
 didacticPlot(meanDiff(dat$weight ~ dat$group)$t,
@@ -52,7 +52,17 @@ data(testRetestSimData);
 exampleData <- testRetestSimData[2:6];
 
 ### Show reliabilities
-scaleReliability(dat=exampleData, ci=FALSE);
+scaleStructure(dat=exampleData);
+
+### Create a dichotomous variable
+exampleData$group <- cut(exampleData$t0_item2, 2);
+
+### Show a dlvPlot
+dlvPlot(exampleData, x="group", y="t0_item1");
+
+### show a dlvPlot with less participants, showing the confidence
+### interval and standard error bars better
+dlvPlot(exampleData[1:30, ], x="group", y="t0_item1");
 
 }
 \keyword{ package }

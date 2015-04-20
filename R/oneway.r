@@ -16,10 +16,13 @@ oneway <- function(y, x, posthoc=NULL, means=FALSE, fullDescribe=FALSE,
   }
   
   if (!is.factor(x)) {
-    warning("### Warning: the x variable (", res$input$x.name, ") is not a",
+    warning("### Warning: the x variable (", res$input$x.name, ") is not a ",
            "factor! Converting it myself - but note that variables in R have ",
-           "data types, and it's advisable to set these adequately!");
+           "data types, and it's advisable to set these adequately (use for ",
+           "example 'as.factor'; see '?as.factor' for help)!");
+    res$input$x.raw <- x;
     x <- as.factor(x);
+    res$input$x <- x;
   }
   
   assign(res$input$x.name, x);
@@ -98,7 +101,7 @@ print.oneway <- function(x, digits=x$input$digits,
                          pvalueDigits=x$input$pvalueDigits,
                          na.print="", ...) {  
   if (x$input$means) {
-    cat(paste0("### Means for y (", x$input$y.name, ") separate for each level of x (", x$input$x.name, "):\n"));
+    cat(paste0("### Means for y (", x$input$y.name, ") separate for each level of x (", x$input$x.name, "):\n\n"));
     print(x$intermediate$means, digits=digits);
     cat("\n");
   }
@@ -108,9 +111,13 @@ print.oneway <- function(x, digits=x$input$digits,
   }
   
   cat(paste0("### Oneway Anova for y=", x$input$y.name,
-             " and x=", x$input$x.name, "\n"));
-  cat(paste0("Eta Squared: 95% CI = [", round(x$output$etasq.ci[1], digits),
-             ";", round(x$output$etasq.ci[2], digits),
+             " and x=", x$input$x.name, " (groups: ",
+             paste0(levels(x$input$x), collapse=", "),
+             ")\n\n"));
+
+  cat(paste0("Eta Squared: ", round(x$input$conf.level * 100),
+             "% CI = [", round(x$output$etasq.ci[1], digits),
+             "; ", round(x$output$etasq.ci[2], digits),
              "], point estimate = ", round(x$output$etasq, digits), "\n\n"));
   
   x$output$dat[, 1:4] <- round(x$output$dat[, 1:4], digits);
@@ -132,24 +139,34 @@ print.oneway <- function(x, digits=x$input$digits,
   }
   
   if (x$input$levene) {
-    cat("\n### Levene's test:\n");
+    cat("\n### Levene's test:\n\n");
     print(x$intermediate$leveneTest);
   }
   
   if (!is.null(x$input$posthoc)) {
-    cat(paste0("\n### Post hoc test: ", x$input$posthoc,"\n"));
-    if (x$input$posthoc %in% c('tukey', 'games-howell')) {
-      x$intermediate$posthoc <- lapply(list(x$intermediate$posthoc), function(x) {
-        x[, 1:ncol(x)-1] <- round(x[, 1:ncol(x)-1], digits);
+    cat(paste0("\n### Post hoc test: ", x$input$posthoc,"\n\n"));
+    if (x$input$posthoc %IN% c('games-howell')) {
+      x$intermediate$posthoc <- as.data.frame(x$intermediate$posthoc);
+      x$intermediate$posthoc[, 1:(ncol(x$intermediate$posthoc)-1)] <-
+        round(x$intermediate$posthoc[, 1:(ncol(x$intermediate$posthoc)-1)], digits);
+      x$intermediate$posthoc[, ncol(x$intermediate$posthoc)] <-
+        formatPvalue(x$intermediate$posthoc[, ncol(x$intermediate$posthoc)], digits=digits+1, includeP=FALSE);
+      print(x$intermediate$posthoc, quote=FALSE);
+    }
+    else if (x$input$posthoc %IN% c('tukey')) {
+      x$intermediate$posthoc <- lapply(x$intermediate$posthoc, function(x) {
+        x[, 1:(ncol(x)-1)] <- round(x[, 1:(ncol(x)-1)], digits);
         x[, ncol(x)] <- formatPvalue(x[,ncol(x)], digits=digits+1, includeP=FALSE);
         return(x);
       });
-      print(x$intermediate$posthoc, quote=FALSE);
+      print(x$intermediate$posthoc[[1]], quote=FALSE);
     }
     else {
       x$intermediate$posthoc$p.value <- formatPvalue(x$intermediate$posthoc$p.value, digits=pvalueDigits, includeP=FALSE);
       print(x$intermediate$posthoc$p.value, quote=FALSE, na.print="");
     }
   }
+  
+  cat("\n");
   
 }

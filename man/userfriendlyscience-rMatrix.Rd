@@ -8,7 +8,7 @@ rMatrix provides a correlation matrix with confidence intervals and a p-value ad
 }
 \usage{
 rMatrix(dat, x, y=NULL, conf.level = .95, correction = "fdr",
-        digits = 2, pval=FALSE, colspace=2, rowspace=0,
+        digits = 2, pValueDigits=3, colspace=2, rowspace=0,
         colNames ="numbers",
         output="R",
         env.LaTeX = 'tabular',
@@ -33,8 +33,8 @@ rMatrix(dat, x, y=NULL, conf.level = .95, correction = "fdr",
   \item{digits}{
   With what precision do you want the results to print.
 }
-  \item{pval}{
-  Determines whether format.pval is used to display the p-value. This will add three characters to the width of columns in case p-values require scientific notation.
+  \item{pValueDigits}{
+  Determines the number of digits to use when displaying p values. P-values that are too small will be shown as p<.001 or p<.00001 etc.
 }
   \item{colspace}{
   Number of spaces between columns (only for R output, ignored for LaTeX output)

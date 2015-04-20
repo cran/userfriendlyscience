@@ -11,7 +11,7 @@ S3method(print, oddsratio);
 S3method(print, powerHist);
 S3method(print, rMatrix);
 S3method(print, scaleDiagnosis);
-S3method(print, scaleReliability);
+S3method(print, scaleStructure);
 S3method(print, sdConfInt);
 S3method(print, testRetestAlpha);
 S3method(print, testRetestCES);
@@ -21,8 +21,9 @@ S3method(print, dataShape);
 S3method(print, didacticPlot);
 S3method(print, scatterMatrix);
 S3method(print, CramersV);
-S3method(print, associationMatrix);
 S3method(print, confIntV);
+S3method(print, crossTab);
+S3method(print, associationMatrix);
 S3method(print, oneway);
 S3method(print, posthocTGH);
 S3method(print, scaleInspection);
@@ -30,7 +31,8 @@ S3method(print, regr);
 
 importFrom('plyr', 'ddply');
 
-importFrom('psych', 'describe', 'omega', 'glb', 'fa', 'principal');
+importFrom('psych', 'describe', 'alpha', 'omega', 'glb',
+           'fa', 'principal', 'polychoric');
 importFrom('pwr', 'pwr.t.test');
 importFrom('fBasics', 'adTest');
 importFrom('ltm', 'cronbach.alpha');

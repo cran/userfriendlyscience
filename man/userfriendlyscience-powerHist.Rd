@@ -10,7 +10,7 @@ powerHist generates a histogram with a density curve and a normal density curve.
 powerHist(vector, distributionColor = "#2222CC",
           normalColor = "#00CC00", distributionLineSize = 2,
           normalLineSize = 1, xLabel = NULL,
-          yLabel = NULL, density=TRUE)
+          yLabel = NULL, density=FALSE)
 }
 \arguments{
   \item{vector}{

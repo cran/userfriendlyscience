@@ -13,7 +13,8 @@ dlvPlot(dat, x = NULL, y, z = NULL, conf.level = .95,
         jitter = "FALSE", binnedDots = TRUE, binwidth=NULL,
         error="lines", dotsize="density", densityDotBaseSize=3,
         normalDotBaseSize=3, violinAlpha = .2, dotAlpha = .4,
-        lineAlpha = 1, meanDotSize=5, posDodge=0)
+        lineAlpha = 1, connectingLineAlpha = 1,
+        meanDotSize=5, posDodge=0.2, errorType = "both")
 dlvTheme(base_size = 14, base_family = "")
 }
 %- maybe also 'usage' for other objects documented here.
@@ -61,13 +62,23 @@ dlvTheme(base_size = 14, base_family = "")
   Numeric value indicating alpha value of dot layer (0 = completely transparent, 1 = completely opaque).
 }
   \item{lineAlpha}{
-  Numeric value indicating alpha value of line layer (0 = completely transparent, 1 = completely opaque).
+  Numeric value indicating alpha value of the confidence interval line layer (0 = completely transparent, 1 = completely opaque).
+}
+  \item{connectingLineAlpha}{
+  Numeric value indicating alpha value of the layer with the lines connecting the means (0 = completely transparent, 1 = completely opaque).
 }
   \item{meanDotSize}{
   Numeric value indicating the size of the dot used to indicate the mean in the line layer.
 }
   \item{posDodge}{
   Numeric value indicating the distance to dodge positions (0 for complete overlap).
+}
+  \item{errorType}{
+  If the error is shown using lines, this argument indicates Whether the
+  errorbars should show the confidence interval (\code{errorType='ci'}),
+  the standard errors (\code{errorType='se'}), or both
+  (\code{errorType='both'}). In this last case, the standard error will be
+  wider than the confidence interval.
 }
   \item{base_size, base_family}{
   Passed on to the ggplot theme_grey() function.

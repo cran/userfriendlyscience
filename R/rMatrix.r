@@ -15,41 +15,11 @@
 ###########################################################
 
 rMatrix <- function(dat, x, y=NULL, conf.level = .95, correction = "fdr",
-                    digits = 2, pval=FALSE, colspace=2, rowspace=0,
+                    digits = 2, pValueDigits=3, colspace=2, rowspace=0,
                     colNames ="numbers",
                     output="R",
                     env.LaTeX = 'tabular',
                     pboxWidthMultiplier = 1) {
-  ### This function takes the following parameters:
-  ###   dat        = dataframe
-  ###   x          = vector of 1+ variable names
-  ###   y          = vector of 1+ variable names; if this is left empty, a symmetric matrix
-  ###                is created; if this is filled, the matrix will have the x variables
-  ###                defining the rows and the y variables defining the columns.
-  ###   conf.level = confidence of confidence intervals
-  ###   correction = correction for multiple testing: an element out of the vector
-  ###                  c("holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none")
-  ###                NOTE: the p-values are corrected for multiple testing;
-  ###                The confidence intervals are not!
-  ###   digits     = with what precision do you want the results to print
-  ###   pval       = determines whether format.pval is used to display the p-value.
-  ###                This will add three characters to the width of columns in case
-  ###                p-values requires scientific notation.
-  ###   colspace   = number of spaces between columns
-  ###   rowspace   = number of rows between table rows (note: one table row is 2 rows)
-  ###
-  ### PARAMETERS FOR PRINT METHOD:
-  ###
-  ### output ("R" or "LaTeX"), env.LaTeX, and pboxWidthMultiplier
-  ###
-  ### If output is set to "LaTeX", the result is a LaTeX table (e.g. for use
-  ### in knitr). In this case, the environment can be set with env.LaTeX.
-  ### When using LaTeX, pboxWidthMultiplier can be used to make the cells
-  ### narrower or wider (1 works for anything up until 4 or 5 digits).
-  ###
-  ### colNames can be "numbers" or "names". "Names" cause variables names
-  ### to be printed in the heading; "numbers" causes the rows to become
-  ### numbered and the numbers to be printed in the heading.
   
   ### Check whether the first vector of vectors has 
   if (length(x) < 1) {
@@ -78,7 +48,7 @@ rMatrix <- function(dat, x, y=NULL, conf.level = .95, correction = "fdr",
   res$ci.confidence <- conf.level;
   res$correction <- correction;
   res$digits <- digits;
-  res$pval <- pval;
+  res$pValueDigits <- pValueDigits;
   res$colspace <- colspace;
   res$rowspace <- rowspace;
   res$colNames <- colNames;
@@ -146,9 +116,10 @@ rMatrix <- function(dat, x, y=NULL, conf.level = .95, correction = "fdr",
 }
 
 print.rMatrix <- function (x, digits=x$digits, output=x$output,
-                                     env.LaTeX = x$env.LaTeX,
-                                     pboxWidthMultiplier = x$pboxWidthMultiplier,
-                                     colNames = x$colNames, pval=x$pval, ...) {
+                           pValueDigits = x$pValueDigits,
+                           env.LaTeX = x$env.LaTeX,
+                           pboxWidthMultiplier = x$pboxWidthMultiplier,
+                           colNames = x$colNames, ...) {
   
   if (output=="R") {
     
@@ -167,6 +138,12 @@ print.rMatrix <- function (x, digits=x$digits, output=x$output,
     ### confidence interval.
     maxConfIntLength <- 8 + digits * 2;
     
+    ### Compute max length of second row
+    max2ndRowLength <- 4 + digits + 5 + pValueDigits;
+    
+    ### set widest content
+    widestContent <- max(maxConfIntLength, max2ndRowLength);
+    
     if (colNames=="numbers") {
       ### The columns contain numbers instead of names;
       ### calculate the max width of these numbers
@@ -181,15 +158,16 @@ print.rMatrix <- function (x, digits=x$digits, output=x$output,
     
     ### Then, compare these to the maxConfIntLength, and store the
     ### larger of the two
-    colSizes <- ifelse(colSizes > maxConfIntLength, colSizes, maxConfIntLength);
+    colSizes <- ifelse(colSizes > widestContent, colSizes, widestContent);
     
     ### If pval is TRUE, we use the p-value function to format the p-values.
     ### This means that the columns need to be three characters wider, in case
     ### we'll need the scientific notation somewhere.
-    if(x$pval) {
-      colSizes <- colSizes + 3;
-    }
-    
+#     if(x$pval) {
+#       colSizes <- colSizes + 3;
+#     }
+    ### NOTE: obsolete as of 2015-04-15 (version 0.2-3), as formatPvalue is used now
+
     if (colNames=="numbers") {
       ### Print spaces in first cell of first row as wide as
       ### the widest number
@@ -309,19 +287,9 @@ print.rMatrix <- function (x, digits=x$digits, output=x$output,
         }
         else {
           ### Create r & p
-          if(pval) {
-            pValue <- noZero(format.pval(x$p.adj[i,j], digits=digits));
-            if (substring(as.character(pValue), 1, 1) == "<") {
-              pValue <- paste0("p", pValue);
-            }
-            else {
-              pValue <- paste0("p=", pValue);
-            }
-            content <- paste0("r=", formatR(x$r[i,j], digits), ", ", pValue);
-          }
-          else {
-            content <- paste0("r=", formatR(x$r[i,j], digits), ", p=", formatR(x$p.adj[i,j], digits));
-          }
+          content <- paste0("r=", formatR(x$r[i,j], digits), ", ",
+                            formatPvalue(x$p.adj[i,j], digits=pValueDigits,
+                                         spaces=FALSE));
           ### Print point estimate and p-value
           cat(content);
           ### Print trailing spaces (+x$colspace to have space between columns)
@@ -363,23 +331,15 @@ print.rMatrix <- function (x, digits=x$digits, output=x$output,
           ### display, which we calculated earlier.
           cat(paste0(" & \\parbox[t]{", pboxWidth, "}{ \\centering "));
           ### Create confidence interval for this column
-          confInt <- paste0("[", formatR(x$ci.lo[i,j], digits), "; ", formatR(x$ci.hi[i,j], digits), "]");
+          confInt <- paste0("[", formatR(x$ci.lo[i,j], digits), "; ",
+                            formatR(x$ci.hi[i,j], digits), "]");
           ### Print confidence interval and newline character
           cat(paste0(confInt, " \\\\ "));
           ### Print point estimate
-          if(pval) {
-            pValue <- noZero(format.pval(x$p.adj[i,j], digits=digits));
-            if (substring(pValue, 1, 1) == "<") {
-              pValue <- paste0("p", "\\textless", substring(pValue, 2, nchar(pValue)));
-            }
-            else {
-              pValue <- paste0("p=", pValue);
-            }
-            content <- paste0("r=", formatR(x$r[i,j], digits), ", ", pValue);
-          }
-          else {
-            content <- paste0("r=", formatR(x$r[i,j], digits), ", p=", formatR(x$p.adj[i,j], digits));
-          }
+          content <- paste0("r=", formatR(x$r[i,j], digits), ", ",
+                            formatPvalue(x$p.adj[i,j],
+                                         digits=pValueDigits,
+                                         spaces=FALSE));
           ### Print point estimate and p-value and close cell
           cat(content);
           ### Close cell

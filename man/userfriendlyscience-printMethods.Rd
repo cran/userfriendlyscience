@@ -10,7 +10,7 @@
 \alias{print.powerHist}
 \alias{print.rMatrix}
 \alias{print.scaleDiagnosis}
-\alias{print.scaleReliability}
+\alias{print.scaleStructure}
 \alias{print.sdConfInt}
 \alias{print.testRetestAlpha}
 \alias{print.testRetestCES}
@@ -19,9 +19,10 @@
 \alias{print.dataShape}
 \alias{print.didacticPlot}
 \alias{print.scatterMatrix}
-\alias{print.CramersV}
 \alias{print.associationMatrix}
+\alias{print.crossTab}
 \alias{print.confIntV}
+\alias{print.CramersV}
 \alias{print.oneway}
 \alias{print.posthocTGH}
 \alias{print.scaleInspection}
@@ -44,11 +45,11 @@ powerDigits=x$digits + 2, ...)
 \method{print}{oddsratio}(x, digits=x$input$digits, ...)
 \method{print}{powerHist}(x, ...)
 \method{print}{rMatrix}(x, digits=x$digits, output=x$output,
-env.LaTeX = x$env.LaTeX,
+pValueDigits = x$pValueDigits, env.LaTeX = x$env.LaTeX,
 pboxWidthMultiplier = x$pboxWidthMultiplier,
-colNames = x$colNames, pval=x$pval, ...)
+colNames = x$colNames, ...)
 \method{print}{scaleDiagnosis}(x, ...)
-\method{print}{scaleReliability}(x, digits=x$input$digits, ...)
+\method{print}{scaleStructure}(x, digits=x$input$digits, ...)
 \method{print}{sdConfInt}(x, digits=2, ...)
 \method{print}{testRetestAlpha}(x, ...)
 \method{print}{testRetestCES}(x, digits=x$input$digits, ...)
@@ -62,6 +63,8 @@ colNames = x$colNames, pval=x$pval, ...)
                                   info = x$input$info,
                                   file = x$input$file, ...)
 \method{print}{confIntV}(x, digits = x$input$digits, ...)
+\method{print}{crossTab}(x, digits = x$input$digits,
+                         pValueDigits=x$input$pValueDigits, ...)
 \method{print}{oneway}(x, digits = x$input$digits,
                        pvalueDigits=x$input$pvalueDigits,
                        na.print="", ...)
@@ -86,7 +89,7 @@ Whether the frequency object should be printed transposed (this can be useful fo
   \item{powerDigits}{
 Number of digits to use when printing the power.
 }
-  \item{output, env.LaTeX, pboxWidthMultiplier, colNames, pval}{
+  \item{output, env.LaTeX, pboxWidthMultiplier, colNames, pValueDigits}{
 Output to produce; see /code{/link{rMatrix}} for details.
 }
   \item{type, info, file}{

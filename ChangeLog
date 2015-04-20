@@ -1,4 +1,16 @@
 
+
+(version 0.3-0)
+(2015-04-16)
+Fixed powerHist to finally show frequencies with scaled normal curve and density curve
+Fixed a bug in 'oneway'; post-hoc tests now working better
+The 'regr' function now also computes the confidence interval for R^2
+Renamed scaleReliability to scaleStructure and improved it to also provide
+estimates assuming an ordinal level of measurement as well as hierarchical
+omega in addition to total omega
+Improved the way p values are reported in rMatrix
+Improved dlvPlot to show both confidence intervals and standard errors
+
 (version 0.2-2)
 (2015-04-07)
 

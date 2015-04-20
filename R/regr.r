@@ -56,6 +56,21 @@ regr <- function(formula, dat=NULL, conf.level=.95, digits=2,
   res$intermediate$lm.scaled <-
     lm(res$intermediate$formula, res$intermediate$dat.scaled);
   
+  ### R^2 confidence interval based on formula at
+  ### http://www.danielsoper.com/statcalc3/calc.aspx?id=28
+  res$intermediate$rsq <- rsq <- summary(res$intermediate$lm.raw)$r.squared;
+  res$intermediate$k <- k <- length(res$intermediate$lm.raw$terms) - 1;
+  res$intermediate$n <- n <- res$intermediate$lm.raw$df.residual + k + 1;
+  res$intermediate$rsq.se <- sqrt((4*rsq*(1-rsq)^2*(n-k-1)^2)/
+                                  ((n^2-1)*(3+n)));
+  res$intermediate$rsq.t.crit <- qt(p=1-(1-conf.level)/2, df=n-k-1);
+  res$output$rsq.ci <- c(res$intermediate$rsq -
+                           res$intermediate$rsq.t.crit *
+                           res$intermediate$rsq.se,
+                         res$intermediate$rsq +
+                           res$intermediate$rsq.t.crit *
+                           res$intermediate$rsq.se);
+  
   ### Run confint on lm object
   res$intermediate$confint.raw <-
     confint(res$intermediate$lm.raw, level=conf.level);
@@ -96,11 +111,14 @@ print.regr <- function(x, digits=x$input$digits,
   cat(paste0("Regression analysis for formula: ",
              x$intermediate$formula.as.character, "\n\n",
              "Significance test of the entire model (all predictors together):\n",
-             "Multiple R-squared: ",
+             "  Multiple R-squared: [",
+             round(x$output$rsq.ci[1], digits), ", ",
+             round(x$output$rsq.ci[2], digits),
+             "] (point estimate = ",
              round(x$intermediate$summary.raw$r.squared, digits),
-             ", Adjusted R-squared: ",
-             round(x$intermediate$summary.raw$adj.r.squared, digits), "\n",
-             "Test for significance: F[",
+             ", adjusted = ",
+             round(x$intermediate$summary.raw$adj.r.squared, digits), ")\n",
+             "  Test for significance: F[",
              x$intermediate$summary.raw$fstatistic[2], ", ",
              x$intermediate$summary.raw$fstatistic[3], "] = ",
              round(x$intermediate$summary.raw$fstatistic[1], digits),

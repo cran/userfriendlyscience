@@ -37,7 +37,8 @@ dlvPlot <- function(dat, x = NULL, y, z = NULL, conf.level = .95,
                     jitter = "FALSE", binnedDots = TRUE, binwidth=NULL,
                     error="lines", dotsize="density", densityDotBaseSize=3,
                     normalDotBaseSize=3, violinAlpha = .2, dotAlpha = .4,
-                    lineAlpha = 1, meanDotSize=5, posDodge=0) {
+                    lineAlpha = 1, connectingLineAlpha = 1,
+                    meanDotSize=5, posDodge=0.2, errorType = "both") {
   ### This function constructs a dot-line-violin plot.
 
   ### Create object to return results
@@ -137,9 +138,22 @@ dlvPlot <- function(dat, x = NULL, y, z = NULL, conf.level = .95,
         }
       }
       if (error == "lines") {
-        res$plot <- res$plot + geom_pointrange(data=res$descr,
-                                               aes(x=y, y=mean, ymin=ci.lo, ymax=ci.hi),
-                                               size = 1, alpha=lineAlpha);
+        if (errorType=="ci") {
+          res$plot <- res$plot + geom_pointrange(data=res$descr,
+                                                 aes(x=y, y=mean, ymin=ci.lo, ymax=ci.hi),
+                                                 size = 1, alpha=lineAlpha);
+        } else if (errorType=="se") {
+          res$plot <- res$plot + geom_pointrange(data=res$descr,
+                                                 aes(x=y, y=mean, ymin=mean-se, ymax=mean+se),
+                                                 size = 1, alpha=lineAlpha);
+        } else if (errorType=="both") {
+          res$plot <- res$plot + geom_pointrange(data=res$descr,
+                                                 aes(x=y, y=mean, ymin=ci.lo, ymax=ci.hi),
+                                                 size = 1, alpha=lineAlpha);
+          res$plot <- res$plot + geom_errorbar(data=res$descr,
+                                               aes(x=y, y=mean, ymin=mean-se, ymax=mean+se),
+                                               size = 2, alpha=lineAlpha, width=0);
+        }        
       }
       else if (error == "whiskers") {
         res$plot <- res$plot + geom_errorbar(data=res$descr,
@@ -221,9 +235,22 @@ dlvPlot <- function(dat, x = NULL, y, z = NULL, conf.level = .95,
         }
       }
       if (error == "lines") {
-        res$plot <- res$plot + geom_pointrange(data=res$descr,
-                                               aes(x=y, y=mean, ymin=ci.lo, ymax=ci.hi),
-                                               size = 1, alpha=lineAlpha);
+        if (errorType=="ci") {
+          res$plot <- res$plot + geom_pointrange(data=res$descr,
+                                                 aes(x=x, y=mean, ymin=ci.lo, ymax=ci.hi),
+                                                 size = 1, alpha=lineAlpha);
+        } else if (errorType=="se") {
+          res$plot <- res$plot + geom_pointrange(data=res$descr,
+                                                 aes(x=x, y=mean, ymin=mean-se, ymax=mean+se),
+                                                 size = 1, alpha=lineAlpha);
+        } else if (errorType=="both") {
+          res$plot <- res$plot + geom_pointrange(data=res$descr,
+                                                 aes(x=x, y=mean, ymin=ci.lo, ymax=ci.hi),
+                                                 size = 1, alpha=lineAlpha);
+          res$plot <- res$plot + geom_errorbar(data=res$descr,
+                                               aes(x=x, y=mean, ymin=mean-se, ymax=mean+se),
+                                               size = 2, alpha=lineAlpha, width=0);
+        }
       }
       else if (error == "whiskers") {
         res$plot <- res$plot + geom_errorbar(data=res$descr,
@@ -302,9 +329,22 @@ dlvPlot <- function(dat, x = NULL, y, z = NULL, conf.level = .95,
         }
       }
       if (error == "lines") {
+        if (errorType=="ci") {
         res$plot <- res$plot + geom_pointrange(data=res$descr,
                                                aes(x=x, y=mean, ymin=ci.lo, ymax=ci.hi),
                                                size = 1, alpha=lineAlpha);
+        } else if (errorType=="se") {
+          res$plot <- res$plot + geom_pointrange(data=res$descr,
+                                                 aes(x=x, y=mean, ymin=mean-se, ymax=mean+se),
+                                                 size = 1, alpha=lineAlpha);
+        } else if (errorType=="both") {
+          res$plot <- res$plot + geom_pointrange(data=res$descr,
+                                                 aes(x=x, y=mean, ymin=ci.lo, ymax=ci.hi),
+                                                 size = 1, alpha=lineAlpha);
+          res$plot <- res$plot + geom_errorbar(data=res$descr,
+                                               aes(x=x, y=mean, ymin=mean-se, ymax=mean+se),
+                                               size = 2, alpha=lineAlpha, width=0);
+        }
       }
       else if (error == "whiskers") {
         res$plot <- res$plot + geom_errorbar(data=res$descr,
@@ -313,14 +353,14 @@ dlvPlot <- function(dat, x = NULL, y, z = NULL, conf.level = .95,
       }
       res$plot <- res$plot + stat_summary(fun.y=mean, geom="point", size=meanDotSize, alpha=lineAlpha);
       res$plot <- res$plot + geom_line(data=res$descr,
-                                       aes(x=as.numeric(x), y=mean), size=1, alpha=lineAlpha);
+                                       aes(x=as.numeric(x), y=mean), size=1, alpha=connectingLineAlpha);
     }
     else {
       
       ###############################################################
       ### Constructing multivariate plot with moderator           ###
       ###############################################################
-
+      
       ### Construct dataframe with confidence interval info
       res$descr <- ddply(.data = res$dat, .variables = c(x, z),
                      .fun = function (dat, conf.level) {
@@ -381,9 +421,22 @@ dlvPlot <- function(dat, x = NULL, y, z = NULL, conf.level = .95,
         }
       }
       if (error == "lines") {
-        res$plot <- res$plot + geom_pointrange(data=res$descr,
-                                               aes(x=x, y=mean, ymin=ci.lo, ymax=ci.hi, group=z),
-                                               size = 1, alpha=lineAlpha, position=position_dodge(width=posDodge));
+        if (errorType=="ci") {
+          res$plot <- res$plot + geom_pointrange(data=res$descr,
+                                                 aes(x=x, y=mean, ymin=ci.lo, ymax=ci.hi, group=z),
+                                                 size = 1, alpha=lineAlpha, position=position_dodge(width=posDodge));
+        } else if (errorType=="se") {
+          res$plot <- res$plot + geom_pointrange(data=res$descr,
+                                                 aes(x=x, y=mean, ymin=mean-se, ymax=mean+se, group=z),
+                                                 size = 1, alpha=lineAlpha, position=position_dodge(width=posDodge));
+        } else if (errorType=="both") {
+          res$plot <- res$plot + geom_pointrange(data=res$descr,
+                                                 aes(x=x, y=mean, ymin=ci.lo, ymax=ci.hi, group=z),
+                                                 size = 1, alpha=lineAlpha, position=position_dodge(width=posDodge));
+          res$plot <- res$plot + geom_errorbar(data=res$descr,
+                                               aes(x=x, y=mean, ymin=mean-se, ymax=mean+se, group=z),
+                                               size = 2, alpha=lineAlpha, width=0, position=position_dodge(width=posDodge));
+        }
       }
       else if (error == "whiskers") {
         res$plot <- res$plot + geom_errorbar(data=res$descr,
@@ -391,7 +444,8 @@ dlvPlot <- function(dat, x = NULL, y, z = NULL, conf.level = .95,
                                              size = 1, width=.1, alpha=lineAlpha, position=position_dodge(width=posDodge));
       }
       res$plot <- res$plot + stat_summary(fun.y=mean, geom="point", size=meanDotSize, position=position_dodge(width=posDodge));
-      res$plot <- res$plot + geom_line(data=res$descr, aes(x=x, y=mean, group=z), size=1, alpha=lineAlpha, position=position_dodge(width=posDodge));
+      res$plot <- res$plot + geom_line(data=res$descr, aes(x=x, y=mean, group=z), size=1,
+                                       alpha=connectingLineAlpha, position=position_dodge(width=posDodge));
     }
   }
   

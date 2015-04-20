@@ -1,8 +1,8 @@
 Package: userfriendlyscience
 Type: Package
 Title: Quantitative Analysis Made Accessible
-Version: 0.2-2
-Date: 2015-04-07
+Version: 0.3-0
+Date: 2015-04-16
 Author: Gjalt-Jorn Peters
 Maintainer: Gjalt-Jorn Peters <gjalt-jorn@userfriendlyscience.com>
 License: GPL (>= 2)
@@ -16,7 +16,7 @@ Imports: plyr, psych, pwr, fBasics, ltm, MBESS, SuppDists, GPArotation,
         MASS, mosaic, foreign, car, knitr, xtable, GGally, grid, lavaan
 Depends: ggplot2
 Suggests: XLConnect
-Packaged: 2015-04-07 10:20:59 UTC; micro_000
+Packaged: 2015-04-16 15:43:54 UTC; micro_000
 NeedsCompilation: no
 Repository: CRAN
-Date/Publication: 2015-04-07 13:41:48
+Date/Publication: 2015-04-20 14:22:25

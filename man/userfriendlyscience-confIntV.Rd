@@ -1,19 +1,22 @@
 \name{confIntV}
 \alias{confIntV}
 \alias{cramersV}
+\alias{crossTab}
 \title{
-confIntV and cramersV
+crossTab, confIntV and cramersV
 }
 \description{
 These functions compute the point estimate and confidence interval for
-Cramer's V.
+Cramer's V. The crossTab function also shows a crosstable.
 }
 \usage{
+crossTab(x, y=NULL, conf.level=.95,
+         digits=2, pValueDigits=3, ...)
 cramersV(x, y = NULL, digits=4)
 confIntV(x, y = NULL, conf.level=.95,
-                     samples = 5000, digits=4,
-                     method=c('bootstrap', 'fisher'),
-                     storeBootstrappingData = FALSE)
+         samples = 500, digits=4,
+         method=c('bootstrap', 'fisher'),
+         storeBootstrappingData = FALSE)
 }
 \arguments{
   \item{x}{
@@ -27,6 +30,10 @@ confIntV(x, y = NULL, conf.level=.95,
 }
   \item{digits}{
   Minimum number of digits after the decimal point to show in the result.
+}
+  \item{pValueDigits}{
+  Minimum number of digits after the decimal point to show in the Chi
+  Square p value in the result.
 }
   \item{conf.level}{
   Level of confidence for the confidence interval.
@@ -42,17 +49,23 @@ confIntV(x, y = NULL, conf.level=.95,
   Whether to store (or discard) the data generating during the bootstrapping
   procedure.
 }
+  \item{...}{
+  Extra arguments to \code{crossTab} are passed on to \code{confIntV}.
+}
 }
 \value{
 
-These functions return either a point estimate or a confidence interval
-for Cramer's V, an effect size to describe the association between two
-categorical variables.
+The cramersV and confIntV functions return either a point estimate or
+a confidence interval for Cramer's V, an effect size to describe the 
+association between two categorical variables. The crossTab function is
+just a wrapper around confIntV.
 
 }
 \examples{
 
 ### Get confidence interval for Cramer's V
+### Note that removing the 'table', and so providing raw data, would enable
+### bootstrapping, which can take a while.
 confIntV(table(infert$education, infert$induced));
 
 }

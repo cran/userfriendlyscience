@@ -63,7 +63,7 @@ print.CramersV <- function(x, digits=x$input$digits, ...) {
 }
 
 confIntV <- function(x, y = NULL, conf.level=.95,
-                     samples = 5000, digits=4,
+                     samples = 500, digits=4,
                      method=c('bootstrap', 'fisher'),
                      storeBootstrappingData = FALSE) {
   

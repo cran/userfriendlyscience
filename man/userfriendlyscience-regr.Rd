@@ -1,14 +1,14 @@
 \name{regr}
 \alias{regr}
 \title{
-Regression analysis wrapper that automatically provides confidence intervals
-and standardized coefficients. Note that this function is meant for teaching
-purposes, and therefore it's only for very basic regression analyses.
+regr: a simple regression analysis wrapper
 }
 \description{
-The regr function wraps a number of linear regression functions into
+The \code{regr} function wraps a number of linear regression functions into
 one convenient interface that provides similar output to the regression
-function in SPSS.
+function in SPSS. It automatically provides confidence intervals and
+standardized coefficients. Note that this function is meant for teaching
+purposes, and therefore it's only for very basic regression analyses.
 }
 \usage{
 regr(formula, dat=NULL, conf.level=.95, digits=2,
@@ -16,7 +16,7 @@ regr(formula, dat=NULL, conf.level=.95, digits=2,
 }
 \arguments{
   \item{formula}{
-The formula of the regression analysis, of the form y ~ x + z, where
+The formula of the regression analysis, of the form \code{y ~ x1 + x2}, where
 y is the dependent variable and x1 and x2 are the predictors.
 }
   \item{dat}{
