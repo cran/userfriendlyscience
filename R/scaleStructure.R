@@ -1,8 +1,9 @@
 scaleStructure <- scaleReliability <- function (dat=NULL, items = 'all', digits = 2,
-                              ci = TRUE, interval.type="normal-theory",
-                              conf.level=.95, silent=FALSE,
-                              samples=1000, bootstrapSeed = NULL,
-                              omega.psych = FALSE) {
+                                                ci = TRUE, interval.type="normal-theory",
+                                                conf.level=.95, silent=FALSE,
+                                                samples=1000, bootstrapSeed = NULL,
+                                                omega.psych = TRUE,
+                                                poly = TRUE) {
 
   ### Make object to store results
   res <- list(input = as.list(environment()),
@@ -58,10 +59,19 @@ scaleStructure <- scaleReliability <- function (dat=NULL, items = 'all', digits 
                                      
   ### Get correlation matrix
   res$intermediate$cor <- cor(res$input$dat, use="complete.obs");
+  
+  ### Store number and proportion of positive correlations
+  res$intermediate$cor.pos <-
+    sum(res$intermediate$cor[lower.tri(res$intermediate$cor)] > 0);
+  res$intermediate$cor.total <-
+    (res$input$n.items^2 - res$input$n.items) / 2;
+  res$intermediate$cor.proPos <-
+    res$intermediate$cor.pos / res$intermediate$cor.total;
+  
   ### Cronbach's alpha
-  res$intermediate$alpha <- cronbach.alpha(res$input$dat, na.rm=TRUE);
-  res$output$cronbach.alpha <- res$intermediate$alpha$alpha;
-  res$output$dat$cronbach.alpha <- res$intermediate$alpha$alpha;
+  res$intermediate$alpha <- alpha(res$input$dat, check.keys=FALSE);
+  res$output$cronbach.alpha <- res$intermediate$alpha$total$raw_alpha;
+  res$output$dat$cronbach.alpha <- res$output$cronbach.alpha;
   
   ### GLB and Omega can only be computed if the number
   ### of items exceeds two
@@ -88,22 +98,30 @@ scaleStructure <- scaleReliability <- function (dat=NULL, items = 'all', digits 
     res$output$omega <- res$intermediate$omega$est;
     res$output$dat$omega <- res$intermediate$omega$est;
     suppressWarnings(res$intermediate$omega.psych <- omega(res$input$dat, plot=FALSE));
-    res$output$omega.psych <- res$intermediate$omega.psych;
-    res$output$dat$omega.psych.tot <- res$intermediate$omega.psych$omega.tot;
-    res$output$dat$omega.psych.h <- res$output$omega.psych$omega_h;
+    res$output$omega.psych <- res$intermediate$omega.psych$omega.tot;
+    res$output$dat$omega.psych.tot <- res$output$omega.psych;
+    res$output$dat$omega.psych.h <- res$intermediate$omega.psych$omega_h;
 
     ### Examine largest number of levels for the items
     res$intermediate$maxLevels <- max(apply(res$input$dat, 2,
                                             function(x){return(nlevels(factor(x)))}));
+    res$intermediate$maxRange <- max(res$input$dat, na.rm=TRUE) -
+      min(res$input$dat, na.rm=TRUE) + 1;
+    
     ### If sufficiently low, also provide ordinal estimates
-    if (res$intermediate$maxLevels < 9) {
+    if (poly && res$intermediate$maxLevels < 9 && res$intermediate$maxRange < 9) {
       ### Compute polychoric correlation matrix
-      res$intermediate$polychoric <- polychoric(res$input$dat)$rho;
-      ### Ordinal omega
-      suppressWarnings(res$intermediate$omega.ordinal <-
-                         omega(res$input$dat, poly=TRUE, plot=FALSE));
-      ### Ordinal alpha
-      res$intermediate$alpha.ordinal <- alpha(res$intermediate$polychoric);
+      res$intermediate$polychoric <-
+        suppressWarnings(polychoric(res$input$dat)$rho);
+      
+      if (!any(is.na(res$intermediate$polychoric))) {
+        ### Ordinal omega
+        suppressWarnings(res$intermediate$omega.ordinal <-
+                           omega(res$input$dat, poly=TRUE, plot=FALSE));
+        ### Ordinal alpha
+        res$intermediate$alpha.ordinal <- alpha(res$intermediate$polychoric,
+                                                check.keys=FALSE);
+      }
     }
     
     if (ci) {
@@ -143,9 +161,7 @@ scaleStructure <- scaleReliability <- function (dat=NULL, items = 'all', digits 
                                                   interval.type=interval.type, B=samples);
 
       ### Confidence intervals for ordinal estimates
-      res$intermediate$maxLevels <- max(apply(res$input$dat, 2,
-                                              function(x){return(nlevels(factor(x)))}));
-      if (res$intermediate$maxLevels < 9) {
+      if (poly && res$intermediate$maxLevels < 9 && res$intermediate$maxRange < 9) {
         
         ### Set interval to wald if bootstrapping was requested
         if (interval.type %in% c("bi", "perc", "bca")) {
@@ -203,10 +219,20 @@ scaleStructure <- scaleReliability <- function (dat=NULL, items = 'all', digits 
 
 print.scaleStructure <- function (x, digits=x$input$digits, ...) {
   
-  cat(paste0("Information about this analysis (ignore any errors on the previous line from 'fa'):\n",
-             "\n                       dat: ", x$input$dat.name,
+  if (packageVersion('psych') < '1.5.4') {
+    cat("Note: your version of package 'psych' is lower than 1.5.4 (",
+        as.character(packageVersion('psych')), " to be precise). This means that you ",
+        "might see errors from the 'fa' function above this notice. ",
+        "You can safely ignore these.\n\n", sep="");
+  }
+  
+  cat(paste0("Information about this analysis:\n",
+             "\n                 Dataframe: ", x$input$dat.name,
              "\n                     Items: ", paste(x$input$items, collapse=", "),
-             "\n              Observations: ", x$input$n.observations, "\n\n",
+             "\n              Observations: ", x$input$n.observations,
+             "\n     Positive correlations: ", x$intermediate$cor.pos,
+             " out of ", x$intermediate$cor.total, " (",
+             round(100*x$intermediate$cor.proPos), "%)\n\n",
              "Estimates assuming interval level:\n"));
   if (x$input$n.items > 2) {
     cat(paste0("\n             Omega (total): ", round(x$output$omega, digits=digits),
@@ -224,30 +250,46 @@ print.scaleStructure <- function (x, digits=x$input$digits, ...) {
                  round(x$output$omega.ci[2], digits=digits), "]\n",
                  "          Cronbach's alpha: [", round(x$output$alpha.ci[1], digits=digits),
                  ", ", round(x$output$alpha.ci[2], digits=digits), "]\n"));
-      if (x$input$omega.psych) {
-        cat(paste0("\nNote: the normal point estimate and confidence interval for omega are based on the procedure suggested by ",
-                   "Dunn, Baguley & Brunsden (2013) using the MBESS function ci.reliability, whereas the psych package point estimate was ",
-                   "suggested in Revelle & Zinbarg (2008). See the help ('?scale.ic') for more information.\n"));
-      }
     }
-    if (x$intermediate$maxLevels < 9) {
-      cat(paste0("\nEstimates assuming ordinal level:\n",
-                 "\n     Ordinal Omega (total): ",
-                 round(x$intermediate$omega.ordinal.ci$est, digits=digits),
-                 "\n Ordinal Omega (hierarch.): ",
-                 round(x$intermediate$omega.ordinal$omega_h, digits=digits),
-                 "\n  Ordinal Cronbach's alpha: ",
-                 round(x$intermediate$alpha.ordinal$total$raw_alpha, digits=digits), "\n"));
-      if (x$input$ci & !is.null(x$output$alpha.ordinal.ci)) {
-        ### If confidence intervals were computed AND obtained, print them
-        cat(paste0("Confidence intervals:\n     Ordinal Omega (total): [",
-                   round(x$output$omega.ordinal.ci[1], digits=digits), ", ",
-                   round(x$output$omega.ordinal.ci[2], digits=digits), "]\n",
-                   "  Ordinal Cronbach's alpha: [", round(x$output$alpha.ordinal.ci[1], digits=digits),
-                   ", ", round(x$output$alpha.ordinal.ci[2], digits=digits), "]\n"));
+    if (x$input$poly && x$intermediate$maxLevels < 9 && x$intermediate$maxRange < 9) {
+      if (!is.null(x$intermediate$omega.ordinal)) {
+        cat(paste0("\nEstimates assuming ordinal level:\n",
+                   "\n     Ordinal Omega (total): ",
+                   round(x$intermediate$omega.ordinal$omega.tot, digits=digits),
+                   "\n Ordinal Omega (hierarch.): ",
+                   round(x$intermediate$omega.ordinal$omega_h, digits=digits)));
+        if (x$input$omega.psych) {
+          cat(paste0("\nOrd. Omega (psych package): ", round(x$intermediate$omega.ordinal$omega.tot, digits=digits)));
+        }
+        cat(paste0("\n  Ordinal Cronbach's alpha: ",
+                   round(x$intermediate$alpha.ordinal$total$raw_alpha, digits=digits), "\n"));
+        if (x$input$ci & !is.null(x$output$alpha.ordinal.ci)) {
+          ### If confidence intervals were computed AND obtained, print them
+          cat(paste0("Confidence intervals:\n     Ordinal Omega (total): [",
+                     round(x$output$omega.ordinal.ci[1], digits=digits), ", ",
+                     round(x$output$omega.ordinal.ci[2], digits=digits), "]\n",
+                     "  Ordinal Cronbach's alpha: [", round(x$output$alpha.ordinal.ci[1], digits=digits),
+                     ", ", round(x$output$alpha.ordinal.ci[2], digits=digits), "]\n"));
+        }
+      } else {
+        cat0("\n(Estimates assuming ordinal level not computed, as the polychoric ",
+             "correlation matrix has missing values.)\n");
       }
+    } else if (x$input$poly == TRUE){
+      cat("\n(Estimates assuming ordinal level not computed, as at least one item seems to have more than 8 levels; ",
+          "the highest number of distinct levels is ", x$intermediate$maxLevels, " and the highest range is ",
+          x$intermediate$maxRange, ". This last number needs to be lower than 9 for the polychoric function to work. ",
+          "If this is unexpected, you may want to check for outliers.)\n", sep="");
+    }
+    if (x$input$omega.psych) {
+      cat(paste0("\nNote: the normal point estimate and confidence interval for omega are based on the procedure suggested by ",
+                 "Dunn, Baguley & Brunsden (2013) using the MBESS function ci.reliability, whereas the psych package point estimate was ",
+                 "suggested in Revelle & Zinbarg (2008). See the help ('?scaleStructure') for more information.\n"));
     } else {
-      cat("\n(Estimates assuming ordinal level not computed, as the items have more than 8 levels.)");
+      cat(paste0("\nNote: the normal point estimate and confidence interval for omega are based on the procedure suggested by ",
+                 "Dunn, Baguley & Brunsden (2013). To obtain the (usually higher) omega point estimate using the procedure ",
+                 "suggested by Revelle & Zinbarg (2008), use argument 'omega.psych=TRUE'. See the help ('?scaleStructure') ",
+                 "for more information. Of course, you can also call the 'omega' function from the psych package directly.\n"));
     }
   } else if (x$input$n.items == 2) {
     cat(paste0("\nSpearman Brown coefficient: ", round(x$output$spearman.brown, digits=digits),

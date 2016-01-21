@@ -100,6 +100,11 @@ regr <- function(formula, dat=NULL, conf.level=.95, digits=2,
       paste0(conf.level*100,"% CI, hi"),
       'estimate', 'se', 't', 'p');
   
+  ### Use Z = (b1 - b2) / sqrt(SE_b1^2 + SE_b2^2) to test whether
+  ### the coefficients differ; add arguments such as
+  ### compareCoefficients=FALSE, p.adjust="fdr" to enable user to
+  ### request & correct this.
+  
   class(res) <- 'regr';
   return(res);
 

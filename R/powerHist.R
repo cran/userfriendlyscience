@@ -2,14 +2,18 @@
 ### otherwise it think these variable weren't defined yet.
 utils::globalVariables(c('distribution', '..density..', 'normalX', 'normalY'));
 
-
 ### Make a 'better' histogram using ggplot
-powerHist <- function(vector, distributionColor = "#2222CC",
+powerHist <- function(vector,
+                      histColor = "#0000CC",
+                      distributionColor = "#0000CC",
                       normalColor = "#00CC00",
-                      distributionLineSize = 2,
+                      distributionLineSize = 1,
                       normalLineSize = 1,
+                      histAlpha = .25,
                       xLabel = NULL,
-                      yLabel = NULL, density=FALSE) {
+                      yLabel = NULL, density=FALSE,
+                      theme=dlvTheme(axis.title=element_text(colour = "black")),
+                      rug=TRUE, jitteredRug=TRUE, rugSides="b") {
   varName <- deparse(substitute(vector));
   vector <- na.omit(vector);
   if (!is.numeric(vector)) {
@@ -45,10 +49,11 @@ powerHist <- function(vector, distributionColor = "#2222CC",
     res$plot <- ggplot(data=res$dat, aes(x=distribution)) + 
       xlab(xLabel) +
       ylab(yLabel) +
-      geom_histogram(aes(y=..density..), color=NA, fill=distributionColor,
-                     alpha=.25, binwidth=res$intermediate$tempBinWidth) +
+      geom_histogram(aes(y=..density..), color=NA, fill=histColor,
+                     alpha=histAlpha, binwidth=res$intermediate$tempBinWidth) +
       geom_density(color=distributionColor, size=distributionLineSize) +
-      geom_line(aes(x=normalX, y=normalY), color=normalColor, size=normalLineSize);
+      geom_line(aes(x=normalX, y=normalY), color=normalColor, size=normalLineSize) +
+      theme;
   }
   else {
     ### Get approximate maximum frequency in histogram and multiply
@@ -65,10 +70,27 @@ powerHist <- function(vector, distributionColor = "#2222CC",
     res$plot <- ggplot(data=res$dat, aes(x=distribution)) + 
       xlab(xLabel) +
       ylab(yLabel) +
-      geom_histogram(color=NA, fill=distributionColor,
-                     alpha=.25, binwidth=res$intermediate$tempBinWidth) +
+      geom_histogram(color=NA, fill=histColor,
+                     alpha=histAlpha, binwidth=res$intermediate$tempBinWidth) +
       geom_line(aes(x=normalX, y=density), color=distributionColor, size=distributionLineSize) +
-      geom_line(aes(x=normalX, y=normalY), color=normalColor, size=normalLineSize);
+      geom_line(aes(x=normalX, y=normalY), color=normalColor, size=normalLineSize) +
+      theme;
+  }
+  if (rug) {
+    if (jitteredRug) {
+      res$plot <- res$plot + geom_rug(color=distributionColor, sides=rugSides,
+                                      aes(y=0), position="jitter");
+    } else {
+      res$plot <- res$plot + geom_rug(color=distributionColor, sides=rugSides);
+    }
+  }
+  if (!is.null(res$input$xLabel) && is.logical(res$input$xLabel) &&
+        !(res$input$xLabel)) {
+    res$plot <- res$plot + theme(axis.title.x = element_blank());
+  }
+  if (!is.null(res$input$yLabel) && is.logical(res$input$yLabel) &&
+        !(res$input$yLabel)) {
+    res$plot <- res$plot + theme(axis.title.y = element_blank());
   }
   ### Set class and return result
   class(res) <- "powerHist";

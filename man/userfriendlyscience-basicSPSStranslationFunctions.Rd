@@ -2,6 +2,7 @@
 \alias{basicSPSStranslationFunctions}
 \alias{getData}
 \alias{getDat}
+\alias{exportToSPSS}
 \alias{filterBy}
 \alias{useAll}
 \alias{mediaan}
@@ -10,12 +11,14 @@
 Basic SPSS translation functions
 }
 \description{
-Basic functons to make working with R easier for SPSS users: getData provides an easy way to load SPSS datafiles; filterBy and useAll allow easy temporary filtering of rows from the dataframe; mediaan and modus compute the median and mode of ordinal or numeric data.
+Basic functons to make working with R easier for SPSS users: getData and getDat provide an easy way to load SPSS datafiles, and exportToSPSS to write to a datafile and syntax file that SPSS can import; filterBy and useAll allow easy temporary filtering of rows from the dataframe; mediaan and modus compute the median and mode of ordinal or numeric data.
 }
 \usage{
 getData(filename=NULL, errorMessage = "[defaultErrorMessage]",
-        use.value.labels=TRUE, to.data.frame=TRUE, stringsAsFactors=TRUE, ...)
+        use.value.labels=FALSE, to.data.frame=TRUE, stringsAsFactors=FALSE, ...)
 getDat(dfName="dat", backup=TRUE, ...)
+exportToSPSS(dat, datafile, codefile, fileEncoding = "UTF-8",
+             newLinesInString = " |n| ")
 filterBy(dat, expression, replaceOriginalDataframe = TRUE, envir = parent.frame())
 useAll(dat, replaceFilteredDataframe = TRUE)
 mediaan(vector)
@@ -49,10 +52,22 @@ modus(vector)
   Whether to backup an object with name \code{dfName}, if one already exists
   in the parent environment.
 }
-  \item{dat}{
+\item{dat}{
   Dataframe to process: for filterBy, dataframe to filter rows from; for useAll, dataframe to restore ('unfilter').
 }
-  \item{expression}{
+\item{datafile}{
+  The name of the data file, a comma separated values file that can be read into SPSS by using the code file.
+}
+\item{codefile}{
+  The name of the code file, the SPSS syntax file that can be used to import the data file.
+}
+\item{fileEncoding}{
+  The encoding to use to write the files.
+}
+\item{newLinesInString}{
+  A string to replace newlines with (SPSS has problems reading newlines).
+}
+\item{expression}{
   Logical expression determining which rows to keep and which to drop. Can be either a logical vector or a string which is then evaluated. If it's a string, it's evaluated using 'with' to evaluate the expression using the variable names.
 }
   \item{replaceOriginalDataframe}{

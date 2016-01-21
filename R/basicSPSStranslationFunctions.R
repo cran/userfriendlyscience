@@ -1,8 +1,8 @@
 getData <- function(filename=NULL,
                     errorMessage = "[defaultErrorMessage]",
-                    use.value.labels=TRUE,
+                    use.value.labels=FALSE,
                     to.data.frame=TRUE,
-                    stringsAsFactors=TRUE, ...) {
+                    stringsAsFactors=FALSE, ...) {
   
   dots <- list(...);
   fullArguments <- as.list(environment());
@@ -25,8 +25,9 @@ getData <- function(filename=NULL,
     cat("You did not specify a file to open. Therefore, please select the",
         "file to open in the File Selection Dialog.",
         "Note that this dialog can sometimes appear behind the R window.",
-        "If you do not see the file dialog now, check the start bar",
-        "(in Windows) or the dock (in *nux based systems such as",
+        "If you do not see the file dialog now, use ALT-TAB or check the ",
+        "start bar (in Windows), use COMMAND-TAB (in OSX), or check the ",
+        "dock (in *nux based systems such as",
         "Ubuntu or OS X).");
     filename <- file.choose();
     slashesFilename <- gsub("\\", "/", filename, fixed=TRUE);
@@ -111,26 +112,28 @@ getData <- function(filename=NULL,
     }
     else if ((extension == ".xls") || (extension == "xlsx")) {
       if (!is.element('XLConnect', installed.packages()[, 1])) {
-         stop("To load Excel (.xls or .xlsx) files, I need package 'XLConnect', ",
-              "which in turn requires Java. Please install it yourself if you wish to ",
-              "use this. You can install it using:\n\n",
-              "install.packages('XLConnect')\n\nOf course, you can always export from ",
-              "Excel to .csv (comma separated values) and load that file.");
+        stop("To load Excel (.xls or .xlsx) files, I need package 'XLConnect', ",
+             "which in turn requires Java. Please install it yourself if you wish to ",
+             "use this. You can install it using:\n\n",
+             "install.packages('XLConnect')\n\nOf course, you can always export from ",
+             "Excel to .csv (comma separated values) and load that file.");
       }
       else {
+        wb <- XLConnect::loadWorkbook(filename, ...);
+        dat <- XLConnect::readWorksheet(wb, sheet=1);
         if (requireNamespace('XLConnect')) {
           wb <- XLConnect::loadWorkbook(filename, ...);
           dat <- XLConnect::readWorksheet(wb, sheet=1);
-		} else {
-         stop("To load Excel (.xls or .xlsx) files, I need package 'XLConnect', ",
-              "which in turn requires Java. Please install it yourself if you wish to ",
-              "use this. You can install it using:\n\n",
-              "install.packages('XLConnect')\n\nOf course, you can always export from ",
-              "Excel to .csv (comma separated values) and load that file.");
-		}
-      }
-    }
-
+        } else {
+          stop("To load Excel (.xls or .xlsx) files, I need package 'XLConnect', ",
+               "which in turn requires Java. Please install it yourself if you wish to ",
+               "use this. You can install it using:\n\n",
+               "install.packages('XLConnect')\n\nOf course, you can always export from ",
+               "Excel to .csv (comma separated values) and load that file.");
+        }
+     }
+   }
+    
     ### Store the file where we got this dataframe
     attr(dat, "fileName") <- filename;
     ### Store the call
@@ -158,6 +161,76 @@ getDat <- function(dfName="dat", backup=TRUE, ...) {
       "store the dataframe with the same name, you have to use:\n\n",
       dfName, " <- ", attributes(dat)$getDataCall, ";\n\n",      
       sep="");
+}
+
+
+exportToSPSS <- function (dat, datafile, codefile, fileEncoding = "UTF-8",
+                          newLinesInString = " |n| ") {
+  
+  ### Convert newline characters to spaces
+  if (any(charVectors <- sapply(dat, is.character))) {
+    dat[, charVectors] <- data.frame(lapply(dat[, charVectors],
+                                           function(x) {
+                                             return(gsub('\n', newLinesInString,
+                                                         x));
+                                           }), stringsAsFactors=FALSE);
+  }
+  
+  ### Export datafile
+  write.table(massConvertToNumeric(dat), file = datafile,
+              row.names = FALSE, col.names = TRUE, 
+              sep = ",", quote = TRUE, na = "",
+              fileEncoding = fileEncoding);
+
+  codeFileConnection=file(codefile, open="w", encoding=fileEncoding);
+  
+  cat(paste0("GET DATA
+  /TYPE = TXT
+  /FILE = \"", datafile, "\"
+  /DELIMITERS = \",\"
+  /QUALIFIER = '\"'
+  /FIRSTCASE = 2
+  /VARIABLES =\n"), file=codeFileConnection);
+  
+  varlabels = names(dat);
+  varnames = gsub("[^[:alnum:]_\\$@#]", "\\.", names(dat));
+  
+  cat(paste0("  ", varnames, " ",
+             unlist(lapply(dat, function(x) {
+               if (is.character(x)) {
+                 return(paste0('A', max(nchar(x))));
+               } else {
+                 return("F8.2");
+               }
+             })), collapse="\n"), file=codeFileConnection, append=TRUE);
+
+  cat(".\n\nVARIABLE LABELS\n", file = codeFileConnection, append = TRUE);
+  
+  cat(paste(varnames,
+            paste("\"", varlabels, "\"", sep = ""),
+            "\n"), ".\n", file = codeFileConnection, 
+      append = TRUE);
+  
+  factors <- sapply(dat, is.factor);
+  
+  if (any(factors)) {
+    cat("\nVALUE LABELS\n", file = codeFileConnection, append = TRUE);
+    for (v in which(factors)) {
+      cat("/\n", file = codeFileConnection, append = TRUE);
+      cat(varnames[v], " \n", file = codeFileConnection, append = TRUE, 
+          sep = "");
+      levs <- levels(dat[[v]]);
+      cat(paste(seq_along(levs),
+                paste("\"", levs, "\"", sep = ""),
+                "\n", sep = " "), 
+          file = codeFileConnection, append = TRUE);
+    }
+    cat(".\n", file = codeFileConnection, append = TRUE);
+  }
+  
+  cat("\nEXECUTE.\n", file = codeFileConnection, append = TRUE);
+  
+  close(codeFileConnection);
 }
 
 mediaan <- function(vector) {

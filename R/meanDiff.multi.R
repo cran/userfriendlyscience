@@ -143,10 +143,15 @@ meanDiff.multi <- function(dat, y, x=NULL, var.equal = "yes",
     ### Independent t-tests
     for (xVar in 1:length(x)) {
       for (yVar in 1:length(y)) {
+        
+        meanDiffFormula <- formula(paste0('dat$', y[yVar], " ~ ",
+                                          'dat$', x[xVar]));
+        
         res$results.raw[[length(res$results.raw) + 1]] <-
-          meanDiff(x=dat[[x[xVar]]], y=dat[[y[yVar]]], paired=FALSE,
-                   var.equal=var.equal,
-                   conf.level=conf.level, digits=digits, envir=envir);
+           meanDiff(x=meanDiffFormula, paired=FALSE,
+                    var.equal=var.equal,
+                    conf.level=conf.level, digits=digits, envir=envir);
+        
         ### Build dataframe for plot
         tempData <-
           data.frame(y = c(res$results.raw[[length(res$results.raw)]]$x,
@@ -219,12 +224,13 @@ meanDiff.multi <- function(dat, y, x=NULL, var.equal = "yes",
           coord_flip();
       }
       res$plots.compiled[[x[xVar]]] <- res$plots.compiled[[x[xVar]]] +
-        geom_hline(color=zeroLineColor, size=zeroLineSize) +
+        geom_hline(yintercept=0, color=zeroLineColor, size=zeroLineSize) +
         geom_pointrange(size=1) + labs(x="interval variable",
-                                         y="effect size g (unbiased estimate of Cohen's d)");
+                                         y="effect size g (unbiased estimate of Cohen's d)") +
+        ggtitle(x[xVar]);;
     }
   }
-  
+
   ### Set class & return result
   class(res) <- c("meanDiff.multi");
   return(res);

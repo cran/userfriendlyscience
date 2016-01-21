@@ -13,15 +13,8 @@
 
 ### Scale Diagnosis
 scaleDiagnosis <- function(dat=NULL, items=NULL, plotSize=180, sizeMultiplier = 1,
-                          axisLabels = "none", scaleReliability.ci=FALSE,
-                          conf.level=.95, powerHist=TRUE, ...) {
-  
-  ### dat            = dataframe
-  ### items  = a list of the variables that together
-  ###                  make up the scale
-  ### plotSize       = size of the final plot in millimeters
-  ### sizeMultiplier = allows more flexible control over the size
-  ###                  of the plot elements
+                           axisLabels = "none", scaleReliability.ci=FALSE,
+                           conf.level=.95, powerHist=TRUE, ...) {
 
   ### If no dataframe was specified, load it from an SPSS file
   if (is.null(dat)) {
@@ -87,13 +80,13 @@ scaleDiagnosis <- function(dat=NULL, items=NULL, plotSize=180, sizeMultiplier = 
                          nfactors=res$factors);
     ### Exploratory factor analysis
     res$fa <- fa(r = res$cor, n.obs = res$n, rotate="oblimin",
-                 fm="pa", nfactors=res$factors);
+                 fm="ml", nfactors=res$factors);
   }
   
   ### Internal consistency measures
-  res$scaleReliability <- scaleReliability(dat=res$dat, items=items,
-                                           ci=scaleReliability.ci,
-                                           conf.level=conf.level);
+  res$scaleReliability <- scaleStructure(dat=res$dat, items=items,
+                                         ci=scaleReliability.ci,
+                                         conf.level=conf.level);
   
   ### Return results
   class(res) <- c('scaleDiagnosis');

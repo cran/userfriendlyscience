@@ -29,6 +29,32 @@ freq <- function(vector, digits = 1, nsmall=1, transposed=FALSE, round=1,
     stop("The first argument is not a vector! Did you make a typing error? Remember that R is case sensitive!");
   }
   
+  if (length(unique(vector)) < 2) {
+    stop("There are less than two unique elements in the vector you supplied: ",
+         vecTxt(unique(vector), useQuote='"'), ".");
+  }
+  
+  suppressWarnings(variance <- var(as.numeric(vector), na.rm=TRUE));
+  
+  if (is.null(variance) || is.na(variance)) {
+    res <- paste0("I'm unable to look at variance in the variable you specified ('",
+                  deparse(substitute(vector)),
+                  "') - I get NA or NULL. Trying to convert to a factor.\n");
+    vector <- factor(vector);
+  }
+
+  suppressWarnings(variance <- var(as.numeric(vector), na.rm=TRUE));
+  
+  if (is.null(variance) || is.na(variance)) {
+    res <- paste0("Sorry, the conversion didn't solve anything. I'm aborting.\n");
+    return(res);
+  } #else if (duplicated(vector)[-1L]) {
+#     res <- paste0("The variable you specified ('", deparse(substitute(vector)),
+#         "') has no variance; all values are the same (they are all ",
+#         mean(vector), ").");
+#     return(res);
+#   }
+  
   ### Create object to store results
   res <- list(input = as.list(environment()),
               intermediate = list(),

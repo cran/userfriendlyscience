@@ -11,32 +11,32 @@ The scaleStructure function (which was originally called scaleReliability) compu
 scaleStructure(dat=NULL, items = 'all', digits = 2, ci = TRUE,
                interval.type="normal-theory", conf.level=.95,
                silent=FALSE, samples=1000, bootstrapSeed = NULL,
-               omega.psych = FALSE)
+               omega.psych = TRUE, poly = TRUE)
 scaleReliability(dat=NULL, items = 'all', digits = 2, ci = TRUE,
                  interval.type="normal-theory", conf.level=.95,
                  silent=FALSE, samples=1000, bootstrapSeed = NULL,
-                 omega.psych = FALSE)
+                 omega.psych = TRUE, poly = TRUE)
 }
 \arguments{
-  \item{dat}{
+\item{dat}{
   A dataframe containing the items in the scale. All variables in this
   dataframe will be used if items = 'all'. If \code{dat} is \code{NULL},
   a the \code{\link{getData}} function will be called to show the user
   a dialog to open a file.
 }
-  \item{items}{
+\item{items}{
   If not 'all', this should be a character vector with the names of the
   variables in the dataframe that represent items in the scale.
 }
-  \item{digits}{
+\item{digits}{
   Number of digits to use in the presentation of the results.
 }
-  \item{ci}{
+\item{ci}{
   Whether to compute confidence intervals as well. If true, the method
   specified in \code{interval.type} is used. When specifying a
   bootstrapping method, this can take quite a while!
 }
-  \item{interval.type}{
+\item{interval.type}{
   Method to use when computing confidence intervals. The list of methods
   is explained in \code{\link{ci.reliability}}. Note that when specifying
   a bootstrapping method, the method will be set to \code{normal-theory}
@@ -44,36 +44,44 @@ scaleReliability(dat=NULL, items = 'all', digits = 2, ci = TRUE,
   these are based on the polychoric correlation matrix, and raw data is
   required for bootstrapping.
 }
-  \item{conf.level}{
+\item{conf.level}{
   The confidence of the confidence intervals.
 }
-  \item{silent}{
+\item{silent}{
   If computing confidence intervals, the user is warned that it may take a
   while, unless \code{silent=TRUE}.
 }
-  \item{samples}{
+\item{samples}{
   The number of samples to compute for the bootstrapping of the confidence
   intervals.
 }
-  \item{bootstrapSeed}{
+\item{bootstrapSeed}{
   The seed to use for the bootstrapping - setting this seed makes it
   possible to replicate the exact same intervals, which is useful for
   publications.
 }
-  \item{omega.psych}{
+\item{omega.psych}{
   Whether to also compute the interval estimate for omega using the
-  function 'omega' in the 'psych' package. This method differs from the
-  one used by the MBESS package, and usually (perhaps always) results in
-  higher estimates for omega.
+  \code{\link{omega}} function in the \code{\link{psych}} package.
+  The default point estimate and confidence interval for omega are based
+  on the procedure suggested by Dunn, Baguley & Brunsden (2013) using the
+  \code{\link{MBESS}} function \code{\link{ci.reliability}} (because it
+  has more options for computing confidence intervals, not always requiring
+  bootstrapping), whereas the \code{\link{psych}} package point estimate was
+  suggested in Revelle & Zinbarg (2008). The \code{\link{psych}} estimate
+  usually (perhaps always) results in higher estimates for omega.
+}
+\item{poly}{
+  Whether to compute ordinal measures (if the items have sufficiently
+  few categories).
 }
 }
 \details{
 
-This function is basically a wrapper for functions from the psych,
-GPArotation, ltm, and MBESS packages that compute measures of
-reliability and internal consistency. For backwards compatibility,
-in addition to scaleStructure, scaleReliability can also be used to call
-this function.
+This function is basically a wrapper for functions from the psych and MBESS
+packages that compute measures of reliability and internal consistency. For
+backwards compatibility, in addition to \code{scaleStructure},
+\code{scaleReliability} can also be used to call this function.
 
 }
 \value{
@@ -107,11 +115,16 @@ Sijtsma, K. (2009). On the Use, the Misuse, and the Very Limited Usefulness of C
 
 Zinbarg, R. E., Revelle, W., Yovel, I., & Li, W. (2005). Cronbach's alpha, Revelle's beta and McDonald's omega H: Their relations with each other and two alternative conceptualizations of reliability. \emph{Psychometrika}, 70(1), 123-133. doi:10.1007/s11336-003-0974-7
 }
+\author{
+Gjalt-Jorn Peters
+
+Maintainer: Gjalt-Jorn Peters <gjalt-jorn@userfriendlyscience.com>
+}
 \examples{
 
 \dontrun{
 ### This will prompt the user to select an SPSS file
-scaleReliability();
+scaleStructure();
 }
 
 ### Load data from simulated dataset testRetestSimData (which
@@ -122,13 +135,20 @@ data(testRetestSimData);
 exampleData <- testRetestSimData[2:6];
 
 ### Use all items
-scaleReliability(dat=exampleData, ci=FALSE);
+scaleStructure(dat=exampleData);
 
 ### Use a selection of two variables
-scaleReliability(dat=exampleData, items=c('t0_item2', 't0_item4'), ci=FALSE);
+scaleStructure(dat=exampleData, items=c('t0_item2', 't0_item4'));
 
-### Note that 'ci = FALSE' can be omitted to compute confidence intervals
-### for scales of three items or more.
+### Make the items resemble an ordered categorical (ordinal) scale
+ordinalExampleData <- data.frame(apply(exampleData, 2, cut,
+                                       breaks=5, ordered_result=TRUE,
+                                       labels=as.character(1:5)));
+
+### Now we also get estimates assuming the ordinal measurement level
+scaleStructure(ordinalExampleData);
+
+
 
 }
 \keyword{ utilities }

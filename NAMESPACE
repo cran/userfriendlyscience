@@ -28,14 +28,35 @@ S3method(print, oneway);
 S3method(print, posthocTGH);
 S3method(print, scaleInspection);
 S3method(print, regr);
+S3method(print, asymmetricalScatterMatrix);
+S3method(print, therapyMonitor);
+S3method(print, therapyMonitor.multi);
+S3method(print, descr);
+S3method(print, processOpenSesameIAT);
+S3method(print, processOpenSesameIAT.log);
+
+S3method(sort, associationMatrix)
+
+importFrom("grDevices", "dev.off", "png", "svg")
+importFrom("stats", "TukeyHSD", "aggregate", "aov", "approx",
+           "chisq.test", "complete.cases", "confint", "cor",
+           "cor.test", "cov", "dchisq", "density", "df", "dnorm", "dt",
+           "formula", "ks.test", "lm", "lm.influence", "median",
+           "na.omit", "p.adjust", "pairwise.t.test", "pchisq", "pf",
+           "pnorm", "pt", "ptukey", "qchisq", "qnorm", "qt",
+           "quantile", "reshape", "sd", "shapiro.test", "t.test",
+           "terms", "var", "var.test")
+importFrom("utils", "capture.output", "chooseCRANmirror", "combn",
+           "head", "install.packages", "installed.packages",
+           "packageVersion", "read.csv", "read.delim", "tail",
+           "write.table")
 
 importFrom('plyr', 'ddply');
 
 importFrom('psych', 'describe', 'alpha', 'omega', 'glb',
-           'fa', 'principal', 'polychoric');
-importFrom('pwr', 'pwr.t.test');
+           'fa', 'principal', 'polychoric', 'fisherz', 'fisherz2r');
+importFrom('pwr', 'pwr.t.test', 'pwr.r.test');
 importFrom('fBasics', 'adTest');
-importFrom('ltm', 'cronbach.alpha');
 importFrom('MBESS', 'ci.reliability', 'ci.pvaf');
 importFrom('SuppDists', 'pPearson', 'dPearson');
 ### For 'omega' in the psych package - calls 'principal' in the psych package,
@@ -52,13 +73,18 @@ importFrom('xtable', 'xtable');
 
 importFrom('car', 'Anova', 'leveneTest');
 
+importFrom('SCRT', 'pvalue.systematic');
+
 importFrom('ggplot2', 'ggplot', 'theme_grey', 'theme', '%+replace%', 'aes', 'aes_string',
            'geom_line', 'geom_point', 'geom_violin', 'geom_jitter', 'geom_dotplot',
-           'geom_pointrange', 'geom_errorbar', 'geom_histogram', 'geom_density',
-           'element_line', 'element_rect', 'element_text', 'element_blank',
-           'position_jitter', 'position_dodge',
-           'stat_summary', 'labs', 'xlab', 'ylab', 'rel');
-importFrom('GGally', 'ggpairs', 'getPlot', 'putPlot');
-importFrom('grid', 'unit', 'grid.newpage', 'pushViewport', 'viewport', 'grid.layout');
+           'geom_pointrange', 'geom_errorbar', 'geom_histogram', 'geom_density', 'geom_bar',
+           'element_line', 'element_rect', 'element_text', 'element_blank', 'scale_fill_brewer',
+           'position_jitter', 'position_dodge', 'geom_smooth', 'geom_rug',
+           'stat_summary', 'labs', 'xlab', 'ylab', 'rel', 'theme_bw', 'scale_y_reverse',
+           'ggplot_build', 'ggsave', 'ggtitle', 'coord_polar', 'guides', 'guide_legend');
+importFrom('GGally', 'ggpairs', 'getPlot', 'putPlot', 'wrap');
+importFrom('grid', 'unit', 'grid.newpage', 'pushViewport', 'viewport', 'grid.layout',
+           'textGrob', 'grid.rect', 'gpar', 'grid.draw');
+importFrom('gridExtra', 'arrangeGrob');
 
 importFrom('lavaan', 'sem');

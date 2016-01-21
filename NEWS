@@ -1,6 +1,9 @@
 userfriendlyscience NEWS
 ------------------------
 
+0.4-0 2015-
+  * processOpenSesameIAT was added, to process OpenSesame IAT datafiles
+
 0.3-0 2015-04-16
   * Fixed powerHist to finally show frequencies with scaled normal curve
     and density curve

@@ -1,6 +1,7 @@
 \name{userfriendlyscience-package}
 \alias{userfriendlyscience-package}
 \alias{userfriendlyscience}
+\alias{addToLog}
 \docType{package}
 \title{
 Userfriendlyscience
@@ -16,8 +17,8 @@ This package contains a number of functions that serve
 \tabular{ll}{
 Package: \tab userfriendlyscience\cr
 Type: \tab Package\cr
-Version: \tab 0.3-0\cr
-Date: \tab 2015-04-16\cr
+Version: \tab 0.4-0\cr
+Date: \tab 2015-\cr
 License: \tab GPL (>= 2)\cr
 }
 The package contains a variety of functions designed to make life easier. These functions are geared towards researchers in psychology.
@@ -27,6 +28,14 @@ Gjalt-Jorn Peters
 
 Maintainer: Gjalt-Jorn Peters <gjalt-jorn@userfriendlyscience.com>
 }
+\seealso{
+  \code{\link{psych}} and \code{\link{MBESS}} contain many useful functions
+  for researchers in psychology.
+}
+\references{
+Peters, G.-J. Y. (2014). The alpha and the omega of scale reliability and validity: why and how to abandon Cronbach's alpha and the route towards more comprehensive assessment of scale quality. \emph{European Health Psychologist}, 16(2), 56-69.
+}
+
 \examples{
 ### Create simple dataset
 dat <- PlantGrowth[1:20,];

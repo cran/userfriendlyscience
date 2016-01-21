@@ -1,4 +1,9 @@
-
+(version 0.4-0)
+(2015-
+processOpenSesameIAT was added, to process OpenSesame IAT datafiles
+didcaticPlot improved to deal with negative t values
+normalityAssessment improved to work with new powerHist function
+Added crossTab function for computing crosstabs, Cramer's V, and Chi square
 
 (version 0.3-0)
 (2015-04-16)

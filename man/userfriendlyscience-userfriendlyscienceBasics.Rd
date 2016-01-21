@@ -12,7 +12,9 @@
 \alias{is.even}
 \alias{convertToNumeric}
 \alias{massConvertToNumeric}
+\alias{vecTxt}
 \alias{\%IN\%}
+\alias{cat0}
 \title{
 userfriendlyscience basics
 }
@@ -31,8 +33,14 @@ invertItem(item, range=NULL, ignorePreviousInversion = FALSE)
 is.odd(vector)
 is.even(vector)
 convertToNumeric(vector, byFactorLabel = FALSE)
-massConvertToNumeric(dat, byFactorLabel = FALSE, ignoreCharacter = TRUE)
+massConvertToNumeric(dat, byFactorLabel = FALSE,
+                     ignoreCharacter = TRUE,
+                     stringsAsFactors = FALSE)
+vecTxt(vector, delimiter = ", ", useQuote = "",
+      firstDelimiter = NULL, lastDelimiter = " & ",
+      firstElements = 0, lastElements = 1, lastHasPrecedence = TRUE)
 find \%IN\% table
+cat0(..., sep="")
 }
 \arguments{
   \item{packageName}{
@@ -94,15 +102,46 @@ The number of times to repeat the string.
   \item{byFactorLabel}{
   If TRUE, convertToNumeric and massConvertToNumeric use the factor labels, interpreted as character vectors, to determine the numeric value, instead of the level's indices (which is what as.numeric() does).
 }
-  \item{ignoreCharacter}{
+\item{ignoreCharacter}{
   If TRUE, character vectors are ignored. If FALSE, character vectors are converted (or, an attempt is made :-)).
-  }
-  \item{find}{
+}
+\item{stringsAsFactors}{
+  If TRUE, strings (character vectors) in the dataframe will be converted to
+  factors (by as.data.frame, after the function called lapply).
+}
+\item{find}{
   The element(s) to look up in the vector or matrix.
-  }
-  \item{table}{
+}
+\item{table}{
   The vector or matrix in which to look up the element.
   }
+\item{delimiter, firstDelimiter, lastDelimiter}{
+  The delimiters to use for respectively the middle, first
+  \code{firstElements}, and last \code{lastElements} elements.
+}
+\item{useQuote}{
+  This character string is pre- and appended to all elements; so use this to
+  quote all elements (\code{useQuote="'"}), doublequote all elements
+  (\code{useQuote='"'}), or anything else (e.g. \code{useQuote='|'}).
+  
+}
+\item{firstElements, lastElements}{
+  The number of elements for which to use the first respective last delimiters
+}
+\item{lastHasPrecedence}{
+  If the vector is very short, it's possible that the sum of firstElements
+  and lastElements is larger than the vector length. In that case, downwardly
+  adjust the number of elements to separate with the first delimiter 
+  (\code{TRUE}) or the number of elements to separate with the last
+  delimiter (\code{FALSE})?
+}
+\item{sep}{
+  The separator to pass to \code{\link{cat}}, of course, "" by default.
+}
+\item{...}{
+  Extra arguments are passed to whatever function is wrapped (e.g.
+  \code{\link{cat}} for \code{cat0}).
+}
 }
 \details{
 The safeRequire function checks whether a package is already installed. If so, it loads the package (using require/library). If not, it first installs it, and then loads it.
@@ -128,6 +167,9 @@ is.odd and is.even check whether a number is, or numbers in a vector are, odd or
 
 The infix function \%IN\% is a case-insensitive version of \code{\link{\%in\%}}.
 
+The cat0 function is to cat what paste0 is to paste; it simply makes 
+concatenating many strings without a separator easier.
+
 }
 \value{
 safeRequire returns nothing.
@@ -142,7 +184,15 @@ is.odd and is.even return a logical vector.
 
 \%IN\% returns a logical vector of the same length as its first argument.
 
+cat0 returns a string.
+
 }
+\author{
+Gjalt-Jorn Peters
+
+Maintainer: Gjalt-Jorn Peters <gjalt-jorn@userfriendlyscience.com>
+}
+
 \examples{
 
 ### load a package

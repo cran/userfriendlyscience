@@ -12,6 +12,8 @@
 ###########################################################
 
 ### This function generates a confidence level for a standard deviation
+### http://www.graphpad.com/guides/prism/6/statistics/index.htm?stat_confidence_interval_of_a_stand.htm
+### https://www.wolframalpha.com/input/?i=confidence+interval+for+a+standard+deviation&lk=3
 sdConfInt <- function(vector=NULL, sd=NULL, n=NULL, conf.level=.95) {
   if (is.null(sd) & is.null(n)) {
     if (is.null(vector)) {
@@ -23,7 +25,7 @@ sdConfInt <- function(vector=NULL, sd=NULL, n=NULL, conf.level=.95) {
   res <- list();
   res$input <- list(vector=vector, sd=sd, n=n, conf.level=conf.level);
   res$intermediate <- list(alpha = 1-conf.level);
-  res$intermediate$chisq.bound.lo <- qchisq((1-res$intermediate$alpha/2), n-1);
+  res$intermediate$chisq.bound.lo <- qchisq(((1-res$intermediate$alpha)/2), n-1);
   res$intermediate$chisq.bound.hi <- qchisq(res$intermediate$alpha/2, n-1);
   ci.lo <- sqrt(((n-1)*sd^2)/res$intermediate$chisq.bound.lo);
   ci.hi <- sqrt(((n-1)*sd^2)/res$intermediate$chisq.bound.hi);
@@ -274,6 +276,10 @@ scaleInspection <- function(dat, items=NULL,
                floating=FALSE);\n',
                '@\n',
                '\\end{minipage}%\n\\newline\n');
+      
+      if (is.null(res$scaleDiagnosis[[currentScale]]$scaleReliability)) {
+        stop(paste0("No scaleReliability object present for scale ", currentScale, "!"));
+      }
       
       if (res$scaleDiagnosis[[currentScale]]$scaleReliability$input$n.items > 2) {
         res$rnwBit[[currentScale]] <-

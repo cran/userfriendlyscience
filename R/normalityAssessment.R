@@ -33,7 +33,7 @@ dataShape <- function(sampleVector, na.rm=TRUE, type=2, digits=2,
   
   if (any(isNA <- is.na(sampleVector))) {
     if (na.rm) {
-      intermediate$sampleVector <- sampleVector <- sampleVector[!isNA];
+      res$intermediate$sampleVector <- sampleVector <- sampleVector[!isNA];
     }
     else {
       return(NA);
@@ -192,8 +192,8 @@ print.dataShape <- function(x, digits=x$input$digits, extraNotification=TRUE, ..
   }
   else if (extraNotification && x$output$type == "G") {
     cat("\nNote: G1 and G2 are the estimates for skewness and kurtosis used by SPSS and SAS,",
-        "and correct for the bias present in g1 and g2 ('type=1'). Note that b1 and b2 ('type=3')",
-        "may perform better in small samples from an normal distribution.");
+        "and corrected for the bias present in g1 and g2 ('type=1'). Note that b1 and b2 ('type=3')",
+        "may perform better in small samples from a normal distribution.");
   }
   else if (extraNotification && x$output$type == "b") {
     cat("\nNote: b1 and b2 are estimates for skewness and kurtosis that have smaller mean-squared error in small",
@@ -235,7 +235,7 @@ normalityAssessment <- function(sampleVector, samples = 5000, digits=3,
     xLabel.sampleDist <- paste0('Value of ', deparse(substitute(sampleVector)));
   }
   if (is.null(yLabel.sampleDist)) {
-    yLabel.sampleDist <- paste0('Density for n=', res$sampleSize);
+    yLabel.sampleDist <- paste0('Frequencies for n=', res$sampleSize);
   }
   
   ### Plot sample distribution
@@ -270,13 +270,13 @@ normalityAssessment <- function(sampleVector, samples = 5000, digits=3,
     xLabel.samplingDist <- paste0('Value of ', deparse(substitute(sampleVector)));
   }
   if (is.null(yLabel.samplingDist)) {
-    yLabel.samplingDist <- paste0('Density for ', res$samples, ' samples of n=', res$sampleSize);
+    yLabel.samplingDist <- paste0('Frequencies for ', res$samples, ' samples of n=', res$sampleSize);
   }
 
   ### Plot sampling distribution
   res$plot.samplingDist <- powerHist(tempDat$samplingDist,
-                                     xLabel=xLabel.sampleDist,
-                                     yLabel=yLabel.sampleDist,
+                                     xLabel=xLabel.samplingDist,
+                                     yLabel=yLabel.samplingDist,
                                      distributionColor=samplingDistColor,
                                      normalColor=normalColor,
                                      distributionLineSize=samplingDistLineSize,

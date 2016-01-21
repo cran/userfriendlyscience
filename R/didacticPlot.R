@@ -184,9 +184,15 @@ didacticPlot <- function(foundValue, statistic, df1, df2 = NULL,
   foundValueLabel <- data.frame(textX = res$foundValue + xMargin,
                                 textY = yIntersection + ((max(res$y) - yIntersection) / 2),
                                 textLabel = paste0(res$unit, "==", res$foundValue));
-  surfaceLabel <- data.frame(textX = res$foundValue + xMargin,
-                             textY = yIntersection,
-                             textLabel = paste0(res$pvalUnit, "==", round(res$foundDensity.hi, 3)));
+  if (res$foundValue > 0) {
+    surfaceLabel <- data.frame(textX = res$foundValue + xMargin,
+                               textY = yIntersection,
+                               textLabel = paste0(res$pvalUnit, "==", round(res$foundDensity.hi, 3)));
+  } else {
+    surfaceLabel <- data.frame(textX = res$foundValue + xMargin,
+                               textY = yIntersection,
+                               textLabel = paste0(res$pvalUnit, "==", round(res$foundDensity.lo, 3)));
+  }
   
   ### Dataset with X position
   verticalLineData <- data.frame(xintercept = res$foundValue);
