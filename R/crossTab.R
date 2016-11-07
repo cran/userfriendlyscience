@@ -20,9 +20,22 @@ crossTab <- function(x, y=NULL, conf.level=.95,
       stop("The length of arguments 'x' and 'y' is not the same; are you ",
            "sure they're both vectors of equal length?");
     }
+    
     res$intermediate$table <- table(x, y);
     res$intermediate$n <- sum(res$intermediate$table);
     res$intermediate$varNames <- c(deparse(substitute(x)), deparse(substitute(y)));
+    res$intermediate$validForBoth <- complete.cases(cbind(x, y));
+
+    if (length(unique(x[res$intermediate$validForBoth])) < 2) {
+      stop("The variable specified as 'x' ('", res$intermediate$varNames[1],
+           "') has less than two unique ",
+           "values!");
+    }
+    if (length(unique(y[res$intermediate$validForBoth])) < 2) {
+      stop("The variable specified as 'y' ('", res$intermediate$varNames[2],
+           "') has less than two unique ",
+           "values!");
+    }
     res$intermediate$confIntV <- confIntV(x, y, conf.level=conf.level, ...);
   }
   
@@ -50,3 +63,15 @@ print.crossTab <- function(x, digits=x$input$digits,
       round(x$output$chisq$statistic, digits), ", ",
       formatPvalue(x$output$chisq$p.value, pValueDigits), sep="");
 }
+
+pander.crossTab <- function(x, digits=x$input$digits,
+                           pValueDigits=x$input$pValueDigits, ...) {
+  cat("\n");
+  pander(x$intermediate$table);
+  cat("\n");
+  print(x$intermediate$confIntV, digits=digits);
+  cat("  \nChi-square[", x$output$chisq$parameter, "] = ",
+      round(x$output$chisq$statistic, digits), ", ",
+      formatPvalue(x$output$chisq$p.value, pValueDigits), sep="");
+}
+

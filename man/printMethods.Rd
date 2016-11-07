@@ -34,6 +34,12 @@
 \alias{print.therapyMonitor.multi}
 \alias{print.asymmetricalScatterMatrix}
 \alias{print.fullFact}
+\alias{print.confIntOmegaSq}
+\alias{print.examine}
+\alias{print.examineBy}
+\alias{print.frequencies}
+\alias{print.power.htest.usf}
+\alias{print.regrInfluential}
 \title{
 userfriendlyscience print methods
 }
@@ -83,11 +89,18 @@ colNames = x$colNames, ...)
 \method{print}{processOpenSesameIAT}(x, ...)
 \method{print}{processOpenSesameIAT.log}(x, ...)
 \method{print}{descr}(x, digits = attr(x, 'digits'),
+                      t = attr(x, "transpose"),
                       row.names = FALSE, ...)
 \method{print}{therapyMonitor}(x, digits=2, printPlot = TRUE, ...)
 \method{print}{therapyMonitor.multi}(x, ...)
 \method{print}{asymmetricalScatterMatrix}(x, ...)
 \method{print}{fullFact}(x, ...)
+\method{print}{confIntOmegaSq}(x, ..., digits = 2)
+\method{print}{examine}(x, ...)
+\method{print}{examineBy}(x, ...)
+\method{print}{frequencies}(x, ...)
+\method{print}{power.htest.usf}(x, digits = x$digits, ...)
+\method{print}{regrInfluential}(x, ...)
 }
 \arguments{
   \item{x}{
@@ -99,7 +112,7 @@ The number of significant digits to print.
   \item{nsmall}{
 The minimum number of digits to the right of the decimal point in formatting real/complex numbers in non-scientific formats. Allowed values are 0 <= nsmall <= 20.
 }
-  \item{transposed}{
+  \item{transposed, t}{
 Whether the frequency object should be printed transposed (this can be useful for blind users).
 }
   \item{powerDigits}{

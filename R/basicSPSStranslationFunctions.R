@@ -1,5 +1,6 @@
-getData <- function(filename=NULL,
+getData <- function(filename=NULL, file=NULL,
                     errorMessage = "[defaultErrorMessage]",
+                    applyRioLabels= TRUE,
                     use.value.labels=FALSE,
                     to.data.frame=TRUE,
                     stringsAsFactors=FALSE, ...) {
@@ -9,17 +10,13 @@ getData <- function(filename=NULL,
   matchedCall <- match.call();
   fullCall <- capture.output(print(matchedCall));
   filenameArgument <- filename;
-  
-  ### File formats that have been implemented
-  supportedFormats <- c(".sav", ".csv", ".tsv", ".rda", ".ods", ".xls", "xlsx");
-  
-  ### Set error message
-  errorMessage <- sub("\\[defaultErrorMessage\\]",
-                      paste0("Specified file does not exist or does not have an extension identifying ",
-                             "it as a readable filetype (valid extensions are: '",
-                             paste(supportedFormats, collapse="', '"), "')."),
-                      errorMessage);
-  
+
+### 2016-08-02: Replacing imports with call to rio's 'import' function.  
+  encoding <- ifelse(is.null(dots$encoding), 'unknown', dots$encoding);
+
+#   ### File formats that have been implemented
+#   supportedFormats <- c("sav", "csv", "tsv", "rda", "ods", "xls", "xlsx", "rdata");
+
   if (is.null(filename)) {
     ### If no filename is specified, request one from the user
     cat("You did not specify a file to open. Therefore, please select the",
@@ -29,7 +26,7 @@ getData <- function(filename=NULL,
         "start bar (in Windows), use COMMAND-TAB (in OSX), or check the ",
         "dock (in *nux based systems such as",
         "Ubuntu or OS X).");
-    filename <- file.choose();
+    filename <- file <- file.choose();
     slashesFilename <- gsub("\\", "/", filename, fixed=TRUE);
     
     if (length(matchedCall) == 1) {
@@ -49,23 +46,58 @@ getData <- function(filename=NULL,
         "command you can use to read the datafile without",
         "a dialog, for example in an R script:\n\n");
     cat(filenameArgument, ";\n\n", sep="");
+    
+    filenameArgument <- filename;
+    
   }
-  
-  extension <- tolower(substring(filename, nchar(filename) - 3));
 
-  if (!file.exists(filename) |
-        !(extension %in% supportedFormats)) {
-    ### Show error if the file doesn't exist or has the wrong extension
-    stop(errorMessage);
-  }
-  else {
-    if (extension == ".rda") {
-      dat <- load(filename);
-      dat <- get(dat);
+  extension <- tolower(gsub(".*\\.(.*)$", '\\1', filenameArgument));
+
+#   ### Set error message
+#   errorMessage <- sub("\\[defaultErrorMessage\\]",
+#                       paste0("Specified file ('", filenameArgument,
+#                              "') does not have an extension identifying ",
+#                              "it as a readable filetype (identified extension is '",
+#                              extension, "', valid extensions are: '",
+#                              paste(supportedFormats, collapse="', '"), "')."),
+#                       errorMessage);
+
+  errorMessage <- sub("\\[defaultErrorMessage\\]",
+                      paste0("Specified file ('", filenameArgument,
+                             "') cannot be imported."),
+                      errorMessage);
+  
+  if (!file.exists(filename)) {
+    stop("Specified file ('", filenameArgument,
+         "') does not exist. Note that R is case sensitive, so make sure ",
+         "your capitalisation is correct!")
+  } else if (extension == "csv") {
+    dat <- read.csv(filename, stringsAsFactors=stringsAsFactors, ...);
+  } else if (extension == "tsv") {
+    dat <- read.delim(filename, stringsAsFactors=stringsAsFactors, ...);
+  } else {
+    dat <- import(filename, encoding=encoding, fread=FALSE);
+    if (applyRioLabels) {
+      dat[] <- lapply(dat, function(x) {
+        if (is.null(attr(x, 'labels'))) {
+          return(x);
+        } else {
+          return(factor(x, levels=attr(x, 'labels'), labels=names(attr(x, 'labels'))));
+        }
+      });
     }
-    if (extension == ".sav") {
-      dat <- suppressWarnings(read.spss(filename, use.value.labels=use.value.labels,
-                              to.data.frame=to.data.frame, ...));
+  }
+
+#   } else if (!(extension %in% supportedFormats)) {
+#     ### Show error if the file doesn't exist or has the wrong extension
+#     stop(errorMessage);
+#   } else {
+#     if ((extension == "rda") || (extension == "rdata")) {
+#       dat <- load(filename);
+#       dat <- get(dat);
+#     } else if (extension == "sav") {
+#       dat <- suppressWarnings(read.spss(filename, use.value.labels=use.value.labels,
+#                               to.data.frame=to.data.frame, ...));
       
 #       dat <- read.spss(filename, use.value.labels=use.value.labels,
 #                        to.data.frame=to.data.frame, ...);
@@ -86,18 +118,15 @@ getData <- function(filename=NULL,
 #          }
 #       });
       
-    }
-    else if (extension == ".csv") {
-      dat <- read.csv(filename, stringsAsFactors=stringsAsFactors, ...);
-    }
-    else if (extension == ".tsv") {
-      dat <- read.delim(filename, stringsAsFactors=stringsAsFactors, ...);
-    }
-    else if (extension == ".ods") {
-      
-      stop("Sorry, I currently do not know how to import OpenOffice files. If you do, ",
-           "please contact me and I'll add this as well!\nOf course, you can always export from ",
-           "LibreOffice or OpenOffice to .csv (comma separated values) and load that file.");
+#     } else if (extension == "csv") {
+#       dat <- read.csv(filename, stringsAsFactors=stringsAsFactors, ...);
+#     } else if (extension == "tsv") {
+#       dat <- read.delim(filename, stringsAsFactors=stringsAsFactors, ...);
+#     } else if (extension == "ods") {
+#       
+#       stop("Sorry, I currently do not know how to import OpenOffice files. If you do, ",
+#            "please contact me and I'll add this as well!\nOf course, you can always export from ",
+#            "LibreOffice or OpenOffice to .csv (comma separated values) and load that file.");
       
 #       if (!is.element('ROpenOffice', installed.packages()[, 1])) {
 #          stop("To load OpenOffice or LibreOffice files, I need package 'ROpenOffice', ",
@@ -109,30 +138,30 @@ getData <- function(filename=NULL,
 #       }
 #       require('ROpenOffice');
 #       dat <- read.ods(filename, ...);
-    }
-    else if ((extension == ".xls") || (extension == "xlsx")) {
-      if (!is.element('XLConnect', installed.packages()[, 1])) {
-        stop("To load Excel (.xls or .xlsx) files, I need package 'XLConnect', ",
-             "which in turn requires Java. Please install it yourself if you wish to ",
-             "use this. You can install it using:\n\n",
-             "install.packages('XLConnect')\n\nOf course, you can always export from ",
-             "Excel to .csv (comma separated values) and load that file.");
-      }
-      else {
-        wb <- XLConnect::loadWorkbook(filename, ...);
-        dat <- XLConnect::readWorksheet(wb, sheet=1);
-        if (requireNamespace('XLConnect')) {
-          wb <- XLConnect::loadWorkbook(filename, ...);
-          dat <- XLConnect::readWorksheet(wb, sheet=1);
-        } else {
-          stop("To load Excel (.xls or .xlsx) files, I need package 'XLConnect', ",
-               "which in turn requires Java. Please install it yourself if you wish to ",
-               "use this. You can install it using:\n\n",
-               "install.packages('XLConnect')\n\nOf course, you can always export from ",
-               "Excel to .csv (comma separated values) and load that file.");
-        }
-     }
-   }
+#     }
+#     else if ((extension == "xls") || (extension == "xlsx")) {
+#       if (!is.element('XLConnect', installed.packages()[, 1])) {
+#         stop("To load Excel (.xls or .xlsx) files, I need package 'XLConnect', ",
+#              "which in turn requires Java. Please install it yourself if you wish to ",
+#              "use this. You can install it using:\n\n",
+#              "install.packages('XLConnect')\n\nOf course, you can always export from ",
+#              "Excel to .csv (comma separated values) and load that file.");
+#       }
+#       else {
+#         wb <- XLConnect::loadWorkbook(filename, ...);
+#         dat <- XLConnect::readWorksheet(wb, sheet=1);
+#         if (requireNamespace('XLConnect')) {
+#           wb <- XLConnect::loadWorkbook(filename, ...);
+#           dat <- XLConnect::readWorksheet(wb, sheet=1);
+#         } else {
+#           stop("To load Excel (.xls or .xlsx) files, I need package 'XLConnect', ",
+#                "which in turn requires Java. Please install it yourself if you wish to ",
+#                "use this. You can install it using:\n\n",
+#                "install.packages('XLConnect')\n\nOf course, you can always export from ",
+#                "Excel to .csv (comma separated values) and load that file.");
+#         }
+#      }
+#    }
     
     ### Store the file where we got this dataframe
     attr(dat, "fileName") <- filename;
@@ -141,10 +170,10 @@ getData <- function(filename=NULL,
     
     ### Return the resuls
     return(dat);
-  }  
+#  }
 }
 
-getDat <- function(dfName="dat", backup=TRUE, ...) {
+getDat <- function(..., dfName="dat", backup=TRUE) {
   dat <- getData(...);
   if (exists(dfName, envir=sys.frame(-1)) && backup) {
     backupName <- paste0(dfName, '_backup_',
@@ -164,8 +193,18 @@ getDat <- function(dfName="dat", backup=TRUE, ...) {
 }
 
 
-exportToSPSS <- function (dat, datafile, codefile, fileEncoding = "UTF-8",
+exportToSPSS <- function (dat,
+                          savfile = NULL,
+                          datafile = NULL,
+                          codefile = NULL,
+                          fileEncoding = "UTF-8",
                           newLinesInString = " |n| ") {
+  
+  if (is.null(savfile)) {
+    if (is.null(datafile) || is.null(codefile)) {
+      stop("If no savfile is specified, specify both a datafile and a codefile!");
+    }
+  }
   
   ### Convert newline characters to spaces
   if (any(charVectors <- sapply(dat, is.character))) {
@@ -176,61 +215,69 @@ exportToSPSS <- function (dat, datafile, codefile, fileEncoding = "UTF-8",
                                            }), stringsAsFactors=FALSE);
   }
   
-  ### Export datafile
-  write.table(massConvertToNumeric(dat), file = datafile,
-              row.names = FALSE, col.names = TRUE, 
-              sep = ",", quote = TRUE, na = "",
-              fileEncoding = fileEncoding);
-
-  codeFileConnection=file(codefile, open="w", encoding=fileEncoding);
+  if (is.null(savfile)) {
+    ### Export datafile
+    write.table(massConvertToNumeric(dat), file = datafile,
+                row.names = FALSE, col.names = TRUE, 
+                sep = ",", quote = TRUE, na = "",
+                fileEncoding = fileEncoding);
   
-  cat(paste0("GET DATA
-  /TYPE = TXT
-  /FILE = \"", datafile, "\"
-  /DELIMITERS = \",\"
-  /QUALIFIER = '\"'
-  /FIRSTCASE = 2
-  /VARIABLES =\n"), file=codeFileConnection);
+    codeFileConnection=file(codefile, open="w", encoding=fileEncoding);
+    
+    cat(paste0("GET DATA
+    /TYPE = TXT
+    /FILE = \"", datafile, "\"
+    /DELIMITERS = \",\"
+    /QUALIFIER = '\"'
+    /FIRSTCASE = 2
+    /VARIABLES =\n"), file=codeFileConnection);
+    
+    varlabels = names(dat);
+    varnames = gsub("[^[:alnum:]_\\$@#]", "\\.", names(dat));
+    
+    cat(paste0("  ", varnames, " ",
+               unlist(lapply(dat, function(x) {
+                 if (is.character(x)) {
+                   return(paste0('A', max(nchar(x))));
+                 } else {
+                   return("F8.2");
+                 }
+               })), collapse="\n"), file=codeFileConnection, append=TRUE);
   
-  varlabels = names(dat);
-  varnames = gsub("[^[:alnum:]_\\$@#]", "\\.", names(dat));
-  
-  cat(paste0("  ", varnames, " ",
-             unlist(lapply(dat, function(x) {
-               if (is.character(x)) {
-                 return(paste0('A', max(nchar(x))));
-               } else {
-                 return("F8.2");
-               }
-             })), collapse="\n"), file=codeFileConnection, append=TRUE);
-
-  cat(".\n\nVARIABLE LABELS\n", file = codeFileConnection, append = TRUE);
-  
-  cat(paste(varnames,
-            paste("\"", varlabels, "\"", sep = ""),
-            "\n"), ".\n", file = codeFileConnection, 
-      append = TRUE);
-  
-  factors <- sapply(dat, is.factor);
-  
-  if (any(factors)) {
-    cat("\nVALUE LABELS\n", file = codeFileConnection, append = TRUE);
-    for (v in which(factors)) {
-      cat("/\n", file = codeFileConnection, append = TRUE);
-      cat(varnames[v], " \n", file = codeFileConnection, append = TRUE, 
-          sep = "");
-      levs <- levels(dat[[v]]);
-      cat(paste(seq_along(levs),
-                paste("\"", levs, "\"", sep = ""),
-                "\n", sep = " "), 
-          file = codeFileConnection, append = TRUE);
+    cat(".\n\nVARIABLE LABELS\n", file = codeFileConnection, append = TRUE);
+    
+    cat(paste(varnames,
+              paste("\"", varlabels, "\"", sep = ""),
+              "\n"), ".\n", file = codeFileConnection, 
+        append = TRUE);
+    
+    factors <- sapply(dat, is.factor);
+    
+    if (any(factors)) {
+      cat("\nVALUE LABELS\n", file = codeFileConnection, append = TRUE);
+      for (v in which(factors)) {
+        cat("/\n", file = codeFileConnection, append = TRUE);
+        cat(varnames[v], " \n", file = codeFileConnection, append = TRUE, 
+            sep = "");
+        levs <- levels(dat[[v]]);
+        cat(paste(seq_along(levs),
+                  paste("\"", levs, "\"", sep = ""),
+                  "\n", sep = " "), 
+            file = codeFileConnection, append = TRUE);
+      }
+      cat(".\n", file = codeFileConnection, append = TRUE);
     }
-    cat(".\n", file = codeFileConnection, append = TRUE);
+    
+    cat("\nEXECUTE.\n", file = codeFileConnection, append = TRUE);
+    
+    close(codeFileConnection);
+    
+  } else {
+    
+    export(x=dat, file=savfile);
+    
   }
   
-  cat("\nEXECUTE.\n", file = codeFileConnection, append = TRUE);
-  
-  close(codeFileConnection);
 }
 
 mediaan <- function(vector) {
