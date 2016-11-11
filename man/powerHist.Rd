@@ -12,7 +12,7 @@ powerHist(vector, histColor = "#0000CC",
           normalColor = "#00CC00", distributionLineSize = 1,
           normalLineSize = 1, histAlpha = 0.25, xLabel = NULL,
           yLabel = NULL, normalCurve = TRUE, breaks = 30,
-          theme = dlvTheme(axis.title = element_text(colour = "black")),
+          theme = dlvTheme(),
           rug = NULL, jitteredRug = TRUE, rugSides = "b",
           rugAlpha = .2, returnPlotOnly = FALSE)
           

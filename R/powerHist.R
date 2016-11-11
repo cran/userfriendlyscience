@@ -15,7 +15,7 @@ powerHist <- function(vector,
                       yLabel = NULL,
                       normalCurve = TRUE,
                       breaks = 30,
-                      theme=dlvTheme(axis.title=element_text(colour = "black")),
+                      theme=dlvTheme(),
                       rug=NULL, jitteredRug=TRUE, rugSides="b",
                       rugAlpha = .2,
                       returnPlotOnly = FALSE) {

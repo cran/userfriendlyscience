@@ -1,8 +1,6 @@
-4efbbcab72c54f9a1d65b53be03db4ee *ChangeLog
-f7e55402049bf688bcafdc4bec3e0e25 *DESCRIPTION
-f3ee031e98542eebc8f6072ece2d5296 *NAMESPACE
-a3d15cfa32cf6464893585264908aa11 *NEWS
-6416beaadc198b075c14c0053ba91caa *R/DDist.R
+84bee70d15eb07d695f8e481d134c762 *DESCRIPTION
+b9e9b1231831b41a7a116814a4e9cf66 *NAMESPACE
+36760be724d8fc72bdf6a4b0429414fd *NEWS
 73bb810e1384b8baa6af9a4d72af9b27 *R/RsqDist.R
 a7db8c1bbfc6c9ae31261a31eac9b4a0 *R/associationMatrix.R
 641e77b242e6c5ea4bd009f7812dfd14 *R/asymmetricalScatterMatrix.R
@@ -21,8 +19,8 @@ b83e196d68614188176e65ca5095d675 *R/descr.R
 20053d418fa4bee5f4973f8207ffe6dc *R/detectRareWords.R
 5201efdd408c45c2753371dc107b172d *R/diamondCoordinates.R
 666bf74f4b917b88becadd9641f3c8be *R/diamondPlot.R
-fad8458804f96685681573402f17cac0 *R/didacticPlot.R
-2c22c7c731c9b78b10526c675e29aa32 *R/dlvPlot.R
+f692583302f6c961f8a42d52c8959160 *R/didacticPlot.R
+796838a96bb930e4f7f328ea189c56bc *R/dlvPlot.R
 9235aa122209ca97ae88383005118425 *R/examine.R
 d0e480f263a496ca6957c0a23ff64924 *R/examineBy.R
 d54e3fe959be12c858db930b1a570e66 *R/exceptionalScore.R
@@ -32,13 +30,13 @@ b0f34b3279e62c803087454b6e108e39 *R/extractVarName.R
 8c4a4b3c5221fce8adb1a82d98eeeff3 *R/factorLoadingDiamondCIplot.R
 6b41769b471306256ec178df7acf9f81 *R/formatCI.R
 0d9dc1cc6dde05d0bc87bdc8869cb1b7 *R/formatPvalue.R
-41fba53949f783c10f6cd291eadfc15e *R/freq.R
+49cf9a25a128b94976e7c2975d9d6835 *R/freq.R
 faae25ddd4666f193a8e4b71b66a69a0 *R/frequencies.R
 e55f317da3eb92c93c6a52a0b3b92266 *R/fullFact.R
 8c12db99a892b558e41ff8a5e829f250 *R/ggBarChart.R
 bb8829fd257820a28e3c6ebb79481ca4 *R/ggBoxplot.R
 eef6733a42bc84ddd49f406b8eac1f68 *R/ggDiamondLayer.R
-b9bf6360d33a5c49a2fb4157f56930cc *R/ggPie.R
+4515b0362ab7e3dbb539eaf439bad127 *R/ggPie.R
 f1dc6c18e9deb1760c14469d2c6f7076 *R/ggqq.R
 d61778c9e05711cf8426d5e80ee7857f *R/importLimeSurveyData.R
 604263a623a92f35778736c31c3b88c5 *R/invertItem.R
@@ -58,7 +56,7 @@ b75406d33412483ebf2b8beb18078a11 *R/meanConfInt.R
 f5947ba7983bad8fcb709c09bae3b029 *R/oneway.R
 3a57cfb405a7ff1906f5ec0bb1126c47 *R/paginatedAsymmetricalScatterMatrix.R
 09a47495cf1fe702f6a973ef2aed2b00 *R/posthocTGH.R
-6ffca8993406da954a770657b3eeadbe *R/powerHist.R
+f5994ccd7783b1a081c369ebb4cdc918 *R/powerHist.R
 0787e7e94addd455a6c2399bd3eca123 *R/prevalencePower.R
 87a01c30cbb4e6327779f52c111d48aa *R/processOpenSesameIAT.R
 b0d4abd729528c59a9ccdb7ed2b15ede *R/pwr.omegasq.R
@@ -79,7 +77,7 @@ a5206d4d5f3557282bbb6683f71971fb *R/scatterPlot.R
 3e647a825ca7b8386b3d09ef7d6549d9 *R/sdConfInt.R
 af2bf8036276c79facc89fcf7f134882 *R/setFigCapNumbering.R
 ffbf970d97466331197343a335b5e491 *R/setTabCapNumbering.R
-2c345443cbb727c6334ceabedcf88a8c *R/showPearsonPower.R
+f49082252d916e03c745ec2112d2b8b2 *R/showPearsonPower.R
 050e9ac939c97d8ded2fb1c2bf69e1f5 *R/simDataSet.R
 0b68bc4b27dab547dff8eee44411da8f *R/sort.associationMatrix.R
 a998089273562b3aeb8a506008c10316 *R/testRetestAlpha.R
@@ -91,7 +89,7 @@ ff65778615012f9bdc8f13554786488d *R/trim.R
 d41d8cd98f00b204e9800998ecf8427e *R/userfriendlyscience.R
 d974e2708f6ecff6788d0c47a2544ba2 *R/userfriendlyscienceBasics.R
 ec17c3ef494c88de6c6eaba7cc79dea5 *R/vecTxt.R
-6908d7d5328ed7e600b90d6d34c25579 *README.md
+91c68184254c929ee440b01a5fe0b05c *README.md
 166840073264954c27f8d5e4d50e4aae *data/testRetestSimData.rda
 e2e94acd8dd7d9d00c98f1dd72d74a3b *inst/CITATION
 e0d0fda77be2543cdba577269458092d *man/RsqDist.Rd
@@ -140,11 +138,9 @@ d3d1edf1e5202a254860492a38bc761d *man/oddsratio.Rd
 f5023f693b006b41e43deb1fa66932a6 *man/omegaSqDist.Rd
 7cb44c2bce349842acd52579cf41724d *man/oneway.Rd
 4878a10647c47681173cf364d0b322a1 *man/paginatedAsymmetricalScatterMatrix.Rd
-420de980f73bbd9d2bdd315bea4f05d8 *man/panderMethods.Rd
 f861142195392462156a7782bba425c2 *man/posthocTGH.Rd
-ff9f67173c7899ac387b00d7a6f4e11c *man/powerHist.Rd
+8545012673d6b8f7ad664a1b545898b1 *man/powerHist.Rd
 a4d151cd20dc0024313845f46b31a5e1 *man/prevalencePower.Rd
-678d10bb883e3205f0a0722dd1489072 *man/printMethods.Rd
 22027f51c85b8749934663bb004f661c *man/processOpenSesameIAT.Rd
 12ae379ee3e84d7db195cc6360551de4 *man/pwr.omegasq.Rd
 e4f09be7a0383132c710deca7f5bf5ff *man/rMatrix.Rd
@@ -153,7 +149,7 @@ e4f09be7a0383132c710deca7f5bf5ff *man/rMatrix.Rd
 3e68bc6f96159ec42b12b6203293647e *man/removeExceptionalValues.Rd
 4cfa2e3858f28028597eed239b366c7c *man/rnwString.Rd
 2ed1757ee34d8288444a13148dc2c3d7 *man/scaleDiagnosis.Rd
-8f3293a4074083fc58cdc03c16ec3c4f *man/scaleDiagnosisToPDF.Rd
+9acd169bf058dc4f9693ea1e9fcdc612 *man/scaleDiagnosisToPDF.Rd
 84ee0526e6444ba56964a3f77de7708e *man/scaleInspection.Rd
 7eec0e55e44689488aa88f2cce732ed6 *man/scaleStructure.Rd
 b95d26b09c536533c2cfd54f5f81321e *man/scatterMatrix.Rd
@@ -169,4 +165,3 @@ d8babdcf52ae9616c3c9d341004eeab2 *man/sort.associationMatrix.Rd
 279af180803092ecaf881b784b82cd5b *man/therapyMonitor.Rd
 cd3a5848e488d5c88224e766956fb516 *man/userfriendlyscience-package.Rd
 766ddf60a4100cf372d34bd4292ddc72 *man/userfriendlyscienceBasics.Rd
-cb6f59d46fa19e3a127bacc22029bc81 *tests/reliabilityTest.r
