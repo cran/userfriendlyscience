@@ -28,6 +28,9 @@ meanDiff <- function(x, y=NULL, paired = FALSE, r.prepost = NULL,
     stop("Argument 'var.equal' must be either 'test', 'yes', or 'no'!");
   }
   var.equal <- tolower(var.equal);
+  if (!(var.equal %in% c('yes', 'no', 'test'))) {
+    stop("Argument 'var.equal' must be either 'test', 'yes', or 'no'!");
+  }
   
   if (!is.numeric(conf.level) || length(conf.level) != 1 || conf.level < 0 || conf.level > 1) {
     stop("Argument 'conf.level' must be a number between 0 and 1!");
@@ -43,7 +46,7 @@ meanDiff <- function(x, y=NULL, paired = FALSE, r.prepost = NULL,
       stop(paste0("Error: if no y vector is specified,\nthe x parameter must be a formula of the form y ~ x,\nwhere x is dichotomous. The formula contains more than three elements (", length(x)," elements)."));
     }
     else if (as.character(x[1]) != '~') {
-      stop(paste0("Error: if no y vector is specified,\nthe x parameter must be a formula of the form y ~ x,\nwhere x is dichotomous. The formula lacks a tilde ('~'; the elements are '",x[1],"', '",x[2],"' and '",x[3],"')."));
+      stop(paste0("Error: if no y vector is specified,\nthe x parameter must be a formula of the form y ~ x,\nwhere x is dichotomous. The formula lacks a tilde ('~'; the first three elements are '",x[1],"', '",x[2],"' and '",x[3],"')."));
     }
     if (paired) {
       stop("Error: when doing a paired t-test, you have to provide both variables as vectors (of the same length), instead of using the formula specification!");
@@ -79,12 +82,12 @@ meanDiff <- function(x, y=NULL, paired = FALSE, r.prepost = NULL,
     ### x and y can be numeric vectors, but it's also possible
     ### one of the two is a dichotomous vector indicating group
     ### membership.
-    if (is.numeric(x) & is.numeric(y)) {
+    if (is.numeric(x) && (length(unique(na.omit(x))) > 2) &&
+        is.numeric(y) && (length(unique(na.omit(y))) > 2)) {
       varNames <- c(extractVarName(deparse(substitute(x))),
                     extractVarName(deparse(substitute(y))));
       groupNames <- varNames;
-    }
-    else if (is.numeric(x) & is.factor(y) & (length(levels(y))==2)) {
+    }     else if (is.numeric(x) && (length(unique(na.omit(y))) == 2)) {
       depVar <- x;
       groupingVar <- y;
       temp <- data.frame(dv = x,
@@ -97,7 +100,7 @@ meanDiff <- function(x, y=NULL, paired = FALSE, r.prepost = NULL,
       groupNames <- c(as.character(levels(temp[['group']])[1]),
                       as.character(levels(temp[['group']])[2]));
     }
-    else if (is.numeric(y) & is.factor(x) & (length(levels(x))==2)) {
+    else if (is.numeric(y) && (length(unique(na.omit(x))) == 2)) {
       depVar <- y;
       groupingVar <- x;
       temp <- data.frame(dv = y,
@@ -343,9 +346,10 @@ print.meanDiff <- function (x, digits=x$digits, powerDigits=x$digits + 2, ...) {
            powerInfo,
            "\n\n(secondary information (NHST): t[", round(x$df, digits), "] = ", round(x$t, digits), ", ", formatPvalue(x$p, digits=digits+1), ")\n"));
   if (regexpr("unequal variances", x$type) > -1) {
-    cat(paste0("NOTE: because the t-test is based on unequal variances, the ",
-               "NHST p-value may be inconsistent with the confidence interval! ",
-               "Use parameter 'var.equal = TRUE' to force equal variances."));
+    cat(paste0("\n\nNOTE: because the t-test is based on unequal variances, the ",
+               "NHST p-value may be inconsistent with the confidence interval. ",
+               "Although this is not a problem, if you wish to ensure consistency, ",
+               "you can use parameter \"var.equal = 'yes'\" to force equal variances.\n\n"));
   }
   
   if (!is.null(x$dlvPlot)) {
@@ -400,8 +404,9 @@ pander.meanDiff <- function (x, digits=x$digits, powerDigits=x$digits + 2, ...) 
              "\n\n*(secondary information (NHST): t[", round(x$df, digits), "] = ", round(x$t, digits), ", ", formatPvalue(x$p, digits=digits+1), ")*\n"));
   if (regexpr("unequal variances", x$type) > -1) {
     cat(paste0("\n\nNOTE: because the t-test is based on unequal variances, the ",
-               "NHST p-value may be inconsistent with the confidence interval! ",
-               "Use parameter 'var.equal = TRUE' to force equal variances.\n\n"));
+               "NHST p-value may be inconsistent with the confidence interval. ",
+               "Although this is not a problem, if you wish to ensure consistency, ",
+               "you can use parameter \"var.equal = 'yes'\" to force equal variances.\n\n"));
   }
   
   invisible();

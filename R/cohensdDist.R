@@ -39,6 +39,16 @@ pdMild <- function(d, n, populationD = 0) {
   return(1 - pdExtreme(d, n, populationD=populationD));
 }
 
+cohensdCI <- function(d, n, conf.level = .95) {
+  ci.bound.lo <- (1 - conf.level) / 2;
+  ci.bound.hi <- 1 - (1 - conf.level) / 2;
+  res <- matrix(c(qCohensd(ci.bound.lo, n, populationD=d),
+                  qCohensd(ci.bound.hi, n, populationD=d)), ncol=2);
+  colnames(res) <- c('lo', 'hi');
+  rownames(res) <- d;
+  return(res);
+}
+
 # ggplot(data.frame(x = seq(-3, 3, by=.1),
 #                   d = dCohensd(seq(-3, 3, by=.1), populationD = .5, 18),
 #                   t = dt(seq(-3, 3, by=.1), 18)),
