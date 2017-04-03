@@ -22,6 +22,7 @@
 \alias{print.associationMatrix}
 \alias{print.crossTab}
 \alias{print.confIntV}
+\alias{print.cohensdCI}
 \alias{print.CramersV}
 \alias{print.oneway}
 \alias{print.posthocTGH}
@@ -38,8 +39,9 @@
 \alias{print.examine}
 \alias{print.examineBy}
 \alias{print.frequencies}
-\alias{print.power.htest.usf}
+\alias{print.power.htest.ufs}
 \alias{print.regrInfluential}
+\alias{print.nnc}
 \title{
 userfriendlyscience print methods
 }
@@ -77,6 +79,7 @@ colNames = x$colNames, ...)
                                   info = x$input$info,
                                   file = x$input$file, ...)
 \method{print}{confIntV}(x, digits = x$input$digits, ...)
+\method{print}{cohensdCI}(x, ...)
 \method{print}{crossTab}(x, digits = x$input$digits,
                          pValueDigits=x$input$pValueDigits, ...)
 \method{print}{oneway}(x, digits = x$input$digits,
@@ -99,8 +102,9 @@ colNames = x$colNames, ...)
 \method{print}{examine}(x, ...)
 \method{print}{examineBy}(x, ...)
 \method{print}{frequencies}(x, ...)
-\method{print}{power.htest.usf}(x, digits = x$digits, ...)
+\method{print}{power.htest.ufs}(x, digits = x$digits, ...)
 \method{print}{regrInfluential}(x, ...)
+\method{print}{nnc}(x, ...)
 }
 \arguments{
   \item{x}{

@@ -13,6 +13,7 @@ what SPSS's DESCRIPTIVES (often called with DESCR) does.
 descr(x, digits = 4, errorOnFactor = FALSE,
       include = c("central tendency", "spread", "range",
                   "distribution shape", "sample size"),
+      maxModes = 1,
       t = FALSE, conf.level=.95,
       quantileType = 2);
 }
@@ -30,6 +31,9 @@ descr(x, digits = 4, errorOnFactor = FALSE,
 }
   \item{include}{
   Which elements to include when showing the results.
+}
+  \item{maxModes}{
+  Maximum number of modes to display: displays "multi" if more than this number of modes if found.
 }
   \item{t}{
   Whether to transpose the dataframes when printing them to the screen (this is easier for users relying on screen readers).

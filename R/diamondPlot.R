@@ -5,8 +5,15 @@ diamondPlot <- function(data,
                         yValues=NULL, yLabels=NULL, ylab = NULL,
                         autoSize=NULL, fixedSize=.15,
                         xlab='Effect Size Estimate',
-                        theme=theme_bw(), color='black', ...) {
-  
+                        theme=theme_bw(), color='black',
+                        returnLayerOnly = FALSE, ...) {
+
+  ### In case we want to check for a complete dataframe
+  # if (sum(complete.cases(data[, c(ciCols, colorCol, otherAxisCol)])) < nrow(data)) {
+  #   warning("The dataframe passed in argument 'data' contained rows with missing values! I am removing these rows.");
+  #   data <- data[complete.cases(data[, c(ciCols, colorCol, otherAxisCol)]), ];
+  # }
+
   if (!is.null(yValues)) {
     ### Check whether yValues specifies a column in 'data' or whether it's a vector
     if (length(yValues) == 1) {
@@ -21,7 +28,7 @@ diamondPlot <- function(data,
       ### so we keep it as is, just like when it /is/ a vector (of length > one)
     }
   }
-  
+
   if (is.null(yValues)) {
     yValues <- 1:nrow(data);
   }
@@ -46,7 +53,7 @@ diamondPlot <- function(data,
   } else {
     yLabels <- yValues;
   }
-  
+
   if (length(colorCol) > 1) {
     if (length(colorCol) != nrow(data)) {
       stop("When specifying a vector as colorCol, this has ",
@@ -61,14 +68,22 @@ diamondPlot <- function(data,
     otherAxisCol <- 'otherAxisCol';
   }
 
+  diamondLayer <- ggDiamondLayer(data, ciCols = ciCols,
+                                 colorCol = colorCol,
+                                 otherAxisCol = otherAxisCol,
+                                 autoSize=autoSize,
+                                 fixedSize = fixedSize,
+                                 color=color, ...);
+
+  if (returnLayerOnly) {
+    return(diamondLayer);
+  }
+
   return(ggplot() +
-           ggDiamondLayer(data, ciCols = ciCols,
-                           colorCol = colorCol,
-                           otherAxisCol = otherAxisCol,
-                           autoSize=autoSize,
-                           fixedSize = fixedSize,
-                           color=color, ...) +
-           scale_y_continuous(breaks=data$otherAxisCol, labels=yLabels) +
-#           scale_y_continuous(breaks=yValues, labels=yLabels) +
-           theme + ylab(ylab) + xlab(xlab));
+           diamondLayer +
+           scale_y_continuous(breaks=data$otherAxisCol, minor_breaks=NULL,
+                              labels=yLabels) +
+           #           scale_y_continuous(breaks=yValues, labels=yLabels) +
+           theme + ylab(ylab) + xlab(xlab)) +
+    theme(panel.grid.minor.y=element_blank());
 }

@@ -12,9 +12,16 @@ meansDiamondPlot(dat, items = NULL,
                  decreasing = NULL,
                  conf.level = 0.95,
                  showData = TRUE,
-                 dataAlpha = 0.1,
+                 dataAlpha = .1,
+                 dataSize = 1,
                  dataColor = "#444444",
                  diamondColors = NULL,
+                 jitterWidth = 0.5,
+                 jitterHeight = 0.4,
+                 returnLayerOnly = FALSE,
+                 xlab = "Effect size estimate",
+                 theme = theme_bw(),
+                 ylab = NULL, 
                  ...)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -40,12 +47,30 @@ meansDiamondPlot(dat, items = NULL,
   \item{dataAlpha}{
   This determines the alpha (transparency) of the data points. Note that argument \code{alpha} can be used to set the alpha of the diamonds; this is eventually passed on to \code{\link{ggDiamondLayer}}.
 }
+  \item{dataSize}{
+  The size of the data points.
+}
   \item{dataColor}{
   The color of the data points.
 }
   \item{diamondColors}{
   A vector of the same length as there are rows in the dataframe,
   to manually specify colors for the diamonds.
+}
+  \item{jitterWidth}{
+  How much to jitter the individual datapoints horizontally.
+}
+  \item{jitterHeight}{
+  How much to jitter the individual datapoints vertically.
+}
+  \item{returnLayerOnly}{
+  Set this to TRUE to only return the \code{\link{ggplot}} layer of the diamondplot, which can be useful to include it in other plots.
+}
+  \item{xlab, ylab}{
+  The labels of the X and Y axes.
+}
+  \item{theme}{
+  The theme to use.
 }
   \item{\dots}{
   Additional arguments are passed to \code{\link{diamondPlot}} and eventually to \code{\link{ggDiamondLayer}}. This can be used to, for example, specify two or more colors to use to generate a gradient (using \code{generateColors} and maybe \code{fullColorRange}).

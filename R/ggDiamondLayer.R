@@ -4,11 +4,12 @@ ggDiamondLayer <- function(data,
                            generateColors = NULL,
                            fullColorRange = NULL,
                            color="black",
+                           lineColor=NA,
                            otherAxisCol=1:nrow(data),
                            autoSize=NULL,
                            fixedSize=.15,
                            ...) {
-  
+
   ### Set column with y axis values
   if (length(otherAxisCol) > 1) {
     data[, 'otherAxisValues'] <- otherAxisCol;
@@ -29,7 +30,9 @@ ggDiamondLayer <- function(data,
                                               from = fullColorRange);
     colorPositionCol <- ncol(data);
     colorPaletteFunction <- colorRamp(generateColors);
-    data[, ncol(data) + 1] <- rgb(colorPaletteFunction(data[, colorPositionCol]) / 256);
+
+    data[!is.na(data[, colorPositionCol]), ncol(data) + 1] <-
+      rgb(colorPaletteFunction(data[!is.na(data[, colorPositionCol]), colorPositionCol]) / 256);
     colorCol <- ncol(data);
 
   }
@@ -46,12 +49,12 @@ ggDiamondLayer <- function(data,
       return(geom_polygon(tmpDf,
                           mapping=aes(x=x, y=y),
                           fill=color,
-                          color=color, ...));
+                          color=ifelse(is.na(lineColor), color, lineColor), ...));
     } else {
       return(geom_polygon(tmpDf,
                           mapping=aes(x=x, y=y),
                           fill=x[[cCol]],
-                          color = x[[cCol]], ...));
+                          color = ifelse(is.na(lineColor), x[[cCol]], lineColor), ...));
     }
   }));
 }

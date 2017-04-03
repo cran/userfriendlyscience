@@ -198,7 +198,7 @@ S3method(print, oddsratio);
 S3method(print, oneway);
 S3method(print, parallelSubscales);
 S3method(print, posthocTGH);
-S3method(print, power.htest.usf);
+S3method(print, power.htest.ufs);
 S3method(print, powerHist);
 S3method(print, processOpenSesameIAT);
 S3method(print, processOpenSesameIAT.log);
@@ -215,6 +215,9 @@ S3method(print, testRetestCES);
 S3method(print, testRetestReliability);
 S3method(print, therapyMonitor);
 S3method(print, therapyMonitor.multi);
+S3method(print, cohensdCI);
+S3method(print, determinantStructure);
+S3method(print, nnc);
 
 S3method(pander, crossTab);
 S3method(pander, dataShape);
@@ -227,6 +230,8 @@ S3method(pander, oneway);
 S3method(pander, regr);
 
 S3method(sort, associationMatrix)
+
+S3method(plot, determinantStructure)
 
 importFrom("grDevices", "dev.off", "png", "svg", "rgb", "colorRamp")
 importFrom("stats", "TukeyHSD", "aggregate", "aov", "approx",
@@ -243,7 +248,7 @@ importFrom("stats", "TukeyHSD", "aggregate", "aov", "approx",
            "quantile", "reshape", "sd", "shapiro.test", "t.test",
            "terms", "var", "var.test", "runif",
            "ppoints", "IQR", "oneway.test",
-           "influence.measures")
+           "influence.measures", "prop.test")
 importFrom("utils", "capture.output", "chooseCRANmirror", "combn",
            "head", "install.packages", "installed.packages",
            "packageVersion", "read.csv", "read.delim", "tail",
@@ -251,6 +256,9 @@ importFrom("utils", "capture.output", "chooseCRANmirror", "combn",
 importFrom("scales", "rescale");
 
 importFrom('plyr', 'ddply', 'raply', 'dlply', 'progress_text', 'as.quoted');
+
+importFrom('data.tree', 'SetGraphStyle', 'as.Node', 'Get', 'Do',
+           'SetEdgeStyle', 'ToDiagrammeRGraph');
 
 importFrom('psych', 'describe', 'alpha', 'omega', 'glb',
            'fa', 'principal', 'polychoric', 'fisherz', 'fisherz2r',
@@ -288,17 +296,23 @@ importFrom('ggplot2', 'ggplot', 'theme_grey', 'theme', '%+replace%', 'aes', 'aes
            'geom_line', 'geom_point', 'geom_violin', 'geom_jitter', 'geom_dotplot',
            'geom_pointrange', 'geom_errorbar', 'geom_histogram', 'geom_density', 'geom_bar',
            'element_line', 'element_rect', 'element_text', 'element_blank', 'scale_fill_brewer',
-           'position_jitter', 'position_dodge', 'geom_smooth', 'geom_rug',
+           'position_jitter', 'position_dodge', 'geom_smooth', 'geom_rug', 'xlim',
            'stat_summary', 'labs', 'xlab', 'ylab', 'rel', 'theme_bw', 'scale_y_reverse',
            'ggplot_build', 'ggsave', 'ggtitle', 'coord_polar', 'coord_flip', 'guides',
            'guide_legend', 'geom_polygon', 'geom_boxplot', 'geom_ribbon', 'geom_abline',
+           'geom_segment', 'geom_rect', 'scale_fill_manual',
            'geom_text', 'aes_q', 'qplot', 'scale_colour_gradient',
-           'scale_x_continuous', 'scale_y_continuous', 'geom_vline', 'geom_hline');
+           'scale_x_continuous', 'scale_y_continuous', 'geom_vline', 'geom_hline',
+           'ggplot_gtable', 'ggplotGrob', 'sec_axis', 'dup_axis');
 importFrom('GGally', 'ggpairs', 'getPlot', 'putPlot', 'wrap');
+importFrom('gtable', 'gtable_add_grob', 'gtable_add_cols',
+           'gtable_filter');
 importFrom('grid', 'unit', 'grid.newpage', 'pushViewport', 'viewport', 'grid.layout',
-           'textGrob', 'grid.rect', 'gpar', 'grid.draw');
+           'textGrob', 'grid.rect', 'gpar', 'grid.draw', 'arrow',
+           'convertUnit', 'grobWidth', 'grobTree');
 importFrom('gridExtra', 'arrangeGrob', 'grid.arrange');
 importFrom('ggrepel', 'geom_text_repel')
 importFrom('RColorBrewer', 'brewer.pal');
+importFrom('DiagrammeR', 'add_global_graph_attrs', 'render_graph');
 
 importFrom('lavaan', 'sem');

@@ -1,6 +1,7 @@
 descr <- descriptives <- function(x, digits=4, errorOnFactor = FALSE,
                                   include=c("central tendency", "spread",
                                             "range", "distribution shape", "sample size"),
+                                  maxModes = 1,
                                   t=FALSE, conf.level=.95,
                                   quantileType = 2) {
   varName <- deparse(substitute(x));
@@ -20,6 +21,9 @@ descr <- descriptives <- function(x, digits=4, errorOnFactor = FALSE,
     nrNA <- sum(is.na(x));
     x <- na.omit(x);
     mode <- modus(x);
+    if (is.numeric(maxModes)) {
+      mode <- ifelse(length(mode) > maxModes, "(multi)", mode);
+    }
     meanCi <- formatCI(meanConfInt(x, conf.level=conf.level)$output$ci);
     if (length(mode) > 1) {
       mode <- vecTxt(mode);
@@ -43,6 +47,7 @@ descr <- descriptives <- function(x, digits=4, errorOnFactor = FALSE,
                                   "NA" = nrNA,
                                   valid = length(x)));
     names(res[['central tendency']])[4] <- paste0(conf.level * 100, '% CI mean');
+    row.names(res$spread) <- NULL;
     attr(res, "varName") <- varName;
     attr(res, "digits") <- digits;
     attr(res, "include") <- include;

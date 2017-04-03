@@ -16,8 +16,8 @@ This package contains a number of functions that serve
 \tabular{ll}{
 Package: \tab userfriendlyscience\cr
 Type: \tab Package\cr
-Version: \tab 0.5-2\cr
-Date: \tab December 2016\cr
+Version: \tab 0.6-0\cr
+Date: \tab 2017-04-01\cr
 License: \tab GPL (>= 2)\cr
 }
 The package contains a variety of functions designed to make life easier. These functions are geared towards researchers in psychology.
@@ -27,9 +27,11 @@ The package implements many solutions provided by people all over the world, mos
 \author{
 Author: Gjalt-Jorn Peters (Open University of the Netherlands, Greater Good, and Maastricht University).
 
-Contributors: Peter Verboon (\code{\link{convert.omegasq.to.cohensf}}, Open University of the Netherlands), Amy Chan (\code{\link{ggPie}}), Jeff Baggett (\code{\link{posthocTGH}}, University of Wisconsin - La Crosse), Daniel McNeish (\code{\link{scaleStructure}}, University of North Carolina).
+Contributors: Peter Verboon (\code{\link{convert.omegasq.to.cohensf}}, Open University of the Netherlands), Amy Chan (\code{\link{ggPie}}), Jeff Baggett (\code{\link{posthocTGH}}, University of Wisconsin - La Crosse), Daniel McNeish (\code{\link{scaleStructure}}, University of North Carolina), Nick Sabbe (\code{\link{curfnfinder}}, Arteveldehogeschool), Douglas Bonett (\code{\link{confIntR}}, \code{\link{pwr.confIntR}}, UC Santa Cruz, United States), Murray Moinester (\code{\link{confIntR}}, \code{\link{pwr.confIntR}}, Tel Aviv University, Israel), Stefan Gruijters (\code{\link{nnc}}, \code{\link{ggNNC}}, \code{\link{convert.d.to.eer}}, \code{\link{convert.d.to.nnc}}, \code{\link{erDataSeq}}, Maastricht University).
 
-A number of functions in this package use code fragments that were used without explicit communicating with the author (because I've been unable to find contact details of the authors, or because I haven't gotten around to contacing them yet). The authors of these fragments are John Fox (\code{\link{car}} code in \code{\link{ggqq}}), Floo0 (\code{\link{ggqq}}), Jason Aizkalns (\code{\link{ggBoxplot}}).
+A number of functions in this package use code fragments that were used without explicit communicating with the author (because I've been unable to find contact details of the authors, or because I haven't gotten around to contacting them yet). The authors of these fragments are John Fox (\code{\link{car}} code in \code{\link{ggqq}}), Floo0 (\code{\link{ggqq}}), Jason Aizkalns (\code{\link{ggBoxplot}}), Luke Tierney (in \code{\link{pwr.cohensdCI}}, its alias \code{\link{pwr.confIntd}}, and \code{\link{cohensdCI}}).
+
+In addition, the function \code{escapeRegEx} from package \code{Hmisc} is included and used internally to avoid importing that entire package just for that function. This function was written by Charles Dupont (Department of Biostatistics, Vanderbilt University). The help page was also taken from that package.
 
 Maintainer: Gjalt-Jorn Peters <gjalt-jorn@userfriendlyscience.com>
 }
@@ -65,11 +67,17 @@ data(testRetestSimData);
 ### Select some items in the first measurement
 exampleData <- testRetestSimData[2:6];
 
+\dontrun{
 ### Show reliabilities
-scaleStructure(dat=exampleData);
+scaleStructure(dat=exampleData, ci=FALSE,
+               omega.psych=FALSE, poly=FALSE);
+}
 
 ### Create a dichotomous variable
 exampleData$group <- cut(exampleData$t0_item2, 2);
+
+### Show item distributions and means
+meansDiamondPlot(exampleData);
 
 ### Show a dlvPlot
 dlvPlot(exampleData, x="group", y="t0_item1");
