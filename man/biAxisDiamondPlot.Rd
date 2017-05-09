@@ -18,14 +18,21 @@ biAxisDiamondPlot(dat, items = NULL,
                   showData = TRUE, dataAlpha = 0.1,
                   dataColor = "#444444", diamondColors = NULL,
                   jitterWidth = 0.45, jitterHeight = 0.45,
-                  xBreaks = NULL, xLabels = NA,
+                  xbreaks = NULL, xLabels = NA,
                   xAxisLab = paste0("Scores and ",
                                     round(100 * conf.level, 2),
                                     "\% CIs"),
                   drawPlot = TRUE, returnPlotOnly = TRUE,
                   baseSize = 1, dotSize = baseSize,
                   baseFontSize = 10 * baseSize,
-                  theme = theme_bw(base_size = baseFontSize), ...)
+                  theme = theme_bw(base_size = baseFontSize),
+                  outputFile = NULL,
+                  outputWidth = 10,
+                  outputHeight = 10,
+                  ggsaveParams = list(units='cm',
+                                      dpi=300,
+                                      type="cairo"),
+                  ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -83,7 +90,7 @@ biAxisDiamondPlot(dat, items = NULL,
   \item{jitterHeight}{
   How much to jitter the individual datapoints vertically.
 }
-  \item{xBreaks}{
+  \item{xbreaks}{
   Which breaks to use on the X axis (can be useful to override
   \code{\link{ggplot}}'s defaults).
 }
@@ -114,6 +121,15 @@ biAxisDiamondPlot(dat, items = NULL,
 }
   \item{theme}{
   This is the theme that is used for the plots.
+}
+  \item{outputFile}{
+  A file to which to save the plot.
+}
+  \item{outputWidth, outputHeight}{
+  Width and height of saved plot (specified in centimeters by default, see \code{ggsaveParams}).
+}
+  \item{ggsaveParams}{
+  Parameters to pass to ggsave when saving the plot.
 }
   \item{\dots}{
   These arguments are passed on to \code{\link{diamondPlot}}.

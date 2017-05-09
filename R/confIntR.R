@@ -2,7 +2,7 @@ confIntR <- function(r, N, conf.level = .95) {
   if ((r < -1) || (r > 1)) {
     stop("The specified observed correlation (argument 'r') must be between -1 and 1.");
   }
-  if ((conf.level < 0.01) || (conf.level >= 1)) {
+  if ((conf.level < 0.0001) || (conf.level >= 1)) {
     stop("The specified desired confidence level (argument 'conf.level') must be between 0 and 1.");
   }
   if (N < 4) {

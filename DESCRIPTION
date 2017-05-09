@@ -1,8 +1,8 @@
 Package: userfriendlyscience
 Type: Package
 Title: Quantitative Analysis Made Accessible
-Version: 0.6-0
-Date: 2017-04-01
+Version: 0.6-1
+Date: 2017-05-01
 Author: Gjalt-Jorn Peters
 Maintainer: Gjalt-Jorn Peters <gjalt-jorn@userfriendlyscience.com>
 License: GPL (>= 2)
@@ -23,6 +23,6 @@ Imports: grDevices, stats, utils, grid, scales, rio, pwr, SuppDists,
         DiagrammeR, ggplot2, GGally, gtable, gridExtra, ggrepel,
         RColorBrewer
 NeedsCompilation: no
-Packaged: 2017-04-03 19:03:19 UTC; micro
+Packaged: 2017-05-09 15:43:23 UTC; micro
 Repository: CRAN
-Date/Publication: 2017-04-03 20:23:45 UTC
+Date/Publication: 2017-05-09 21:16:58 UTC
