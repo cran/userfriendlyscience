@@ -1,16 +1,19 @@
 \name{nnc}
 \alias{nnc}
+\alias{nnt}
 \title{
 Numbers Needed for Change
 }
 \description{
 This function computes the Numbers Needed for Change, and shows a
-visualisation to illustrate them.
+visualisation to illustrate them. \code{nnt} is an alias for \code{nnc}.
 }
 \usage{
-nnc(d = NULL, cer = NULL, r = 1,
+nnc(d = NULL, cer = NULL, r = 1, n = NULL,
     threshold = NULL, mean = 0, sd = 1,
+    poweredFor = NULL, thresholdSensitivity = NULL,
     eventDesirable = TRUE, eventIfHigher = TRUE,
+    conf.level=.95,
     d.ci = NULL, cer.ci = NULL, r.ci = NULL,
     d.n = NULL, cer.n = NULL, r.n = NULL,
     plot = TRUE, returnPlot = TRUE, silent = FALSE)
@@ -26,6 +29,9 @@ nnc(d = NULL, cer = NULL, r = 1,
   The correlation between the determinant and behavior (for mediated
   Numbers Needed for Change).
 }
+  \item{n}{
+  The sample size.
+}
   \item{threshold}{
   If the event rate is not available, a threshold value can be specified
   instead, which is then used in conjunction with the mean
@@ -40,11 +46,26 @@ nnc(d = NULL, cer = NULL, r = 1,
   The standard deviation, used to draw the plot (and to compute the CER
   if a threshold value is supplied instead of the CER).
 }
+  \item{poweredFor}{
+  The Cohen's \emph{d} value for which the study was powered. This
+  expected Cohen's \emph{d} value can be used to compute the
+  threshold, which then in turn is used to compute the CER. To use this
+  approach, also specify the mean and the standard deviation.
+}
+  \item{thresholdSensitivity}{
+  This argument can be used to provide a vector of potential threshold
+  values, each of which is used to compute an NNC. This enables easy
+  inspection of whether the value chosen as threshold matters much for
+  the NNC.
+}
   \item{eventDesirable}{
   Whether an event is desirable or undesirable.
 }
   \item{eventIfHigher}{
   Whether scores above or below the threshold are considered 'an event'.
+}
+  \item{conf.level}{
+  The confidence level of the confidence interval.
 }
   \item{d.ci}{
   Instead of providing a point estimate for Cohen's \emph{d}, a

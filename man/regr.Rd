@@ -11,9 +11,11 @@ standardized coefficients. Note that this function is meant for teaching
 purposes, and therefore it's only for very basic regression analyses.
 }
 \usage{
-regr(formula, dat = NULL, conf.level = .95,
+regr(formula, data = NULL, conf.level = .95,
      digits = 2, pvalueDigits = 3,
-     coefficients = c("raw", "scaled"), plot = FALSE,
+     coefficients = c("raw", "scaled"),
+     plot = FALSE, pointAlpha = .5,
+     collinearity = FALSE, influential = FALSE,
      ci.method = c("widest", "r.con", "olkinfinn"),
      ci.method.note = FALSE, env = parent.frame())
 }
@@ -22,7 +24,7 @@ regr(formula, dat = NULL, conf.level = .95,
 The formula of the regression analysis, of the form \code{y ~ x1 + x2}, where
 y is the dependent variable and x1 and x2 are the predictors.
 }
-  \item{dat}{
+  \item{data}{
 If the terms in the formula aren't vectors but variable names, this should
 be the dataframe where those variables are stored.
 }
@@ -45,6 +47,16 @@ Which coefficients to show; can be "raw" to only show the raw
   For regression analyses with only one predictor (also sometimes confusingly
   referred to as 'univariate' regression analyses), scatterplots with
   regression lines and their standard errors can be produced.
+}
+  \item{pointAlpha}{
+  The alpha channel (transparency, or rather: 'opaqueness') of the points
+  drawn in the plot.
+}
+  \item{collinearity}{
+  Whether to compute and show collinearity diagnostics (specifically, the tolerance (\emph{1 - R^2}, where \emph{R^2} is the one obtained when regressing each predictor on all the other predictors) and the Variance Inflation Factor (VIF), which is the reciprocal of the tolerance, i.e. \emph{VIF = 1 / tolerance}).
+}
+  \item{influential}{
+  Whether to compute diagnostics for influential cases. These are stored in the returned object in the \code{lm.influence.raw} and \code{lm.influence.scaled} objects in the \code{intermediate} object.
 }
   \item{ci.method, ci.method.note}{
   Which method to use for the confidence interval around R squared, and whether to display a note about this choice.

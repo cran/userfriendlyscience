@@ -1,12 +1,39 @@
-exportPattern("^[[:alpha:]]+");
+#functionList <- ls('package:userfriendlyscience');
+#functionList <- functionList[!grepl("^print\\.", functionList)];
+#functionList <- functionList[!grepl("^plot\\.", functionList)];
+#functionList <- functionList[!grepl("^pander\\.", functionList)];
+#functionList <- functionList[!grepl("^sort\\.", functionList)];
+#cat(paste0('export("', functionList, '");\n'), sep="");
+
+#exportPattern("^[[:alpha:]]+");
+
+### To check for methods, use e.g.
+# sort(grep('^pander\\.', names(asNamespace('userfriendlyscience')), value=TRUE));
+
+### To generate the list of methods to register:
+#cat0(paste0('S3method(print, ',
+#            sort(gsub('^print\\.', '',
+#                      grep('^print\\.',
+#                           names(asNamespace('userfriendlyscience')),
+#                           value=TRUE))), ');\n'));
+
+###############################################################  Exports
 
 export("%IN%");
 export("addToLog");
+export("areColors");
 export("associationMatrix");
+export("associationMatrixESDefaults");
+export("associationMatrixStatDefaults");
+export("associationsDiamondPlot");
+export("associationsToDiamondPlotDf");
 export("asymmetricalScatterMatrix");
 export("averageFishersZs");
 export("averagePearsonRs");
+export("biAxisDiamondPlot");
 export("cat0");
+export("checkDataIntegrity");
+export("CIBER");
 export("cohensdCI");
 export("computeEffectSize_d");
 export("computeEffectSize_etasq");
@@ -17,17 +44,23 @@ export("computeStatistic_chisq");
 export("computeStatistic_f");
 export("computeStatistic_r");
 export("computeStatistic_t");
+export("confIntD");
 export("confIntOmegaSq");
+export("confIntProp");
+export("confIntR");
 export("confIntV");
 export("convert.b.to.t");
 export("convert.chisq.to.p");
 export("convert.chisq.to.V");
 export("convert.cohensf.to.omegasq");
 export("convert.cohensfsq.to.omegasq");
+export("convert.d.to.eer");
 export("convert.d.to.logodds");
+export("convert.d.to.nnc");
 export("convert.d.to.r");
 export("convert.d.to.t");
 export("convert.d.to.variance");
+export("convert.er.to.threshold");
 export("convert.etasq.to.cohensf");
 export("convert.f.to.d");
 export("convert.f.to.etasq");
@@ -51,16 +84,25 @@ export("convert.r.to.t");
 export("convert.t.to.d");
 export("convert.t.to.p");
 export("convert.t.to.r");
+export("convert.threshold.to.er");
 export("convertToNumeric");
 export("cramersV");
 export("createSigma");
 export("crossTab");
+export("curfnfinder");
 export("dataShape");
 export("dCohensd");
 export("dd");
 export("descr");
 export("descriptives");
 export("detectRareWords");
+export("determinantStructure");
+export("determinantVar");
+export("detStructAddVarLabels");
+export("detStructAddVarNames");
+export("detStructCIBER");
+export("detStructComputeProducts");
+export("detStructComputeScales");
 export("diamondCoordinates");
 export("diamondPlot");
 export("didacticPlot");
@@ -69,27 +111,42 @@ export("dlvPlot");
 export("dlvTheme");
 export("domegaSq");
 export("dRsq");
+export("duoComparisonDiamondPlot");
+export("erDataSeq");
+export("escapeRegex");
 export("examine");
 export("examineBy");
 export("exceptionalScore");
 export("exceptionalScores");
 export("exportToSPSS");
 export("extractVarName");
+export("facComAnalysis");
 export("faConfInt");
 export("factorLoadingDiamondCIplot");
+export("fanova");
 export("filterBy");
+export("findShortestInterval");
 export("formatCI");
 export("formatPvalue");
 export("formatR");
 export("freq");
 export("frequencies");
+export("Frequency");
+#export("from_epiR_epi.2by2");
 export("fullFact");
+export("genlog");
+export("genlogFunction");
 export("getDat");
 export("getData");
 export("ggBarChart");
 export("ggBoxplot");
+export("ggConfidenceCurve");
 export("ggDiamondLayer");
+export("ggEasyBar");
+export("ggEasyRidge");
+export("ggNNC");
 export("ggPie");
+export("ggProportionPlot");
 export("ggqq");
 export("hasLaTeX");
 export("ifelseObj");
@@ -102,17 +159,23 @@ export("is.nr");
 export("is.odd");
 export("isTrue");
 export("itemInspection");
+export("knitFig");
+export("logRegr");
 export("makeScales");
 export("massConvertToNumeric");
 export("meanConfInt");
 export("meanDiff");
 export("meanDiff.multi");
+export("meansComparisonDiamondPlot");
 export("meansDiamondPlot");
 export("meanSDtoDiamondPlot");
 export("mediaan");
 export("modus");
-export("noZero");
+export("multiVarFreq");
+export("multiResponse");
+export("nnc");
 export("normalityAssessment");
+export("noZero");
 export("oddsratio");
 export("oneway");
 export("paginatedAsymmetricalScatterMatrix");
@@ -120,29 +183,36 @@ export("parallelSubscales");
 export("pCohensd");
 export("pd");
 export("pdExtreme");
-export("pdExtreme");
-export("pdInterval");
 export("pdInterval");
 export("pdMild");
-export("pdMild");
+export("piecewiseRegr");
 export("pomegaSq");
 export("posthocTGH");
 export("powerHist");
 export("prevalencePower");
+export("prob.randomizationSuccess");
+export("processLimeSurveyDropouts");
+export("processLSvarLabels");
 export("processOpenSesameIAT");
 export("pRsq");
+export("pwr.cohensdCI");
+export("pwr.confIntd");
+export("pwr.confIntR");
 export("pwr.omegasq");
+export("pwr.randomizationSuccess");
 export("qCohensd");
 export("qd");
 export("qomegaSq");
 export("qRsq");
+export("rawDataDiamondLayer");
 export("rCohensd");
 export("rd");
 export("regr");
 export("regrInfluential");
+export("reliability");
 export("removeExceptionalValues");
-export("repStr");
 export("repeatStr");
+export("repStr");
 export("rMatrix");
 export("rnwString.generate");
 export("rnwString.initiate");
@@ -155,15 +225,19 @@ export("sanitizeLatexString");
 export("scaleDiagnosis");
 export("scaleDiagnosisToPDF");
 export("scaleInspection");
-export("scaleStructure");
 export("scaleReliability");
+export("scaleStructure");
 export("scatterMatrix");
 export("scatterPlot");
 export("sdConfInt");
+export("setCaptionNumbering");
 export("setFigCapNumbering");
 export("setTabCapNumbering");
+export("sharedSubString");
 export("showPearsonPower");
 export("simDataSet");
+export("subdeterminantProducts");
+export("subdeterminants");
 export("testRetestAlpha");
 export("testRetestCES");
 export("testRetestReliability");
@@ -172,31 +246,46 @@ export("therapyMonitor");
 export("therapyMonitor.multi");
 export("trim");
 export("useAll");
+export("validMeans");
+export("validSums");
+export("varsToDiamondPlotDf");
 export("vecTxt");
 export("vecTxtQ");
 
+##################################################  Method registrations
+
 S3method(print, associationMatrix);
 S3method(print, asymmetricalScatterMatrix);
+S3method(print, cohensdCI);
 S3method(print, confIntOmegaSq);
 S3method(print, confIntV);
 S3method(print, CramersV);
 S3method(print, crossTab);
 S3method(print, dataShape);
 S3method(print, descr);
+S3method(print, determinantStructure);
 S3method(print, didacticPlot);
 S3method(print, dlvPlot);
 S3method(print, examine);
 S3method(print, examineBy);
+S3method(print, facComAnalysis);
+S3method(print, fanova);
 S3method(print, freq);
 S3method(print, frequencies);
 S3method(print, fullFact);
+S3method(print, genlog);
+S3method(print, ggProportionPlot);
+S3method(print, logRegr);
 S3method(print, meanConfInt);
 S3method(print, meanDiff);
 S3method(print, meanDiff.multi);
+S3method(print, multiVarFreq);
+S3method(print, nnc);
 S3method(print, normalityAssessment);
 S3method(print, oddsratio);
 S3method(print, oneway);
 S3method(print, parallelSubscales);
+S3method(print, piecewiseRegr);
 S3method(print, posthocTGH);
 S3method(print, power.htest.ufs);
 S3method(print, powerHist);
@@ -215,10 +304,8 @@ S3method(print, testRetestCES);
 S3method(print, testRetestReliability);
 S3method(print, therapyMonitor);
 S3method(print, therapyMonitor.multi);
-S3method(print, cohensdCI);
-S3method(print, determinantStructure);
-S3method(print, nnc);
 
+S3method(pander, associationMatrix);
 S3method(pander, crossTab);
 S3method(pander, dataShape);
 S3method(pander, descr);
@@ -226,36 +313,50 @@ S3method(pander, examine);
 S3method(pander, examineBy);
 S3method(pander, freq);
 S3method(pander, frequencies);
+S3method(pander, meanDiff);
+S3method(pander, multiVarFreq);
+S3method(pander, normalityAssessment);
 S3method(pander, oneway);
 S3method(pander, regr);
 
 S3method(sort, associationMatrix)
 
 S3method(plot, determinantStructure)
+
+S3method(grid.draw, ggProportionPlot)
+
+####################################################  Imported functions
+
 importFrom("grDevices", "dev.off", "png", "svg", "rgb", "colorRamp",
            "col2rgb")
+
 importFrom("stats", "TukeyHSD", "aggregate", "aov", "approx",
            "chisq.test", "complete.cases", "confint", "cor",
            "cor.test", "cov", "dchisq", "density",
-           "formula", "ks.test", "lm", "lm.influence", "median",
+           "formula", "as.formula", "ks.test", "lm", "lm.influence",
+           "glm", "median", "binomial", "influence", "predict",
            "na.omit", "p.adjust", "pairwise.t.test", "pchisq",
            "qnorm", "dnorm", "pnorm", "rnorm",
            "dbeta", "pbeta", "qbeta", "rbeta",
+           "qbinom",
            "pt", "rt", "qt", "dt",
            "df", "qf", "rf", "pf",
-           "qtukey",
-           "ptukey", "qchisq",
+           "qtukey", "ptukey", "qchisq",
            "quantile", "reshape", "sd", "shapiro.test", "t.test",
            "terms", "var", "var.test", "runif",
            "ppoints", "IQR", "oneway.test",
-           "influence.measures", "prop.test")
+           "influence.measures", "prop.test",
+           "coef", "coefficients", "deviance", "uniroot",
+           "fisher.test", "addmargins", "mantelhaen.test")
+
 importFrom("utils", "capture.output", "chooseCRANmirror", "combn",
            "head", "install.packages", "installed.packages",
            "packageVersion", "read.csv", "read.delim", "tail",
            "write.table", "write.csv", "as.roman")
 importFrom("scales", "rescale");
 
-importFrom('plyr', 'ddply', 'raply', 'dlply', 'progress_text', 'as.quoted');
+importFrom('plyr', 'ddply', 'raply', 'dlply', 'rbind.fill',
+           'progress_text', 'as.quoted');
 
 importFrom('data.tree', 'SetGraphStyle', 'as.Node', 'Get', 'Do',
            'SetEdgeStyle', 'ToDiagrammeRGraph');
@@ -271,13 +372,14 @@ importFrom('SuppDists', 'pPearson', 'dPearson', "qPearson");
 ### with default 'oblimin' rotation (default of 'omega', not of 'principal').
 importFrom('GPArotation', 'oblimin');
 
-importFrom('MASS', 'mvrnorm');
-importFrom('mosaic', 'do', 'resample');
+importFrom('MASS', 'mvrnorm', "rlm");
+### No longer needed I think (rewrote a bit of confIntV)
+#importFrom('mosaic', 'do', 'resample');
 
 ### Rio supersedes this
 #importFrom('foreign', 'read.spss');
 
-importFrom('knitr', 'knit', 'knit_hooks', 'opts_knit');
+importFrom('knitr', 'knit', 'knit_hooks', 'opts_knit', 'knit_expand');
 importFrom('pander', 'pander', 'pandoc.p');
 
 importFrom('xtable', 'xtable');
@@ -287,23 +389,30 @@ importFrom('XML', 'htmlParse', 'xpathSApply', 'xmlValue');
 importFrom('car', 'Anova', 'leveneTest');
 
 importFrom('SCRT', 'pvalue.systematic');
+importFrom('minpack.lm', 'nlsLM');
 
 importFrom('diptest', 'dip.test');
 
 importFrom('rio', 'import', 'export');
 
-importFrom('ggplot2', 'ggplot', 'theme_grey', 'theme', '%+replace%', 'aes', 'aes_string',
+importFrom('ggplot2', 'ggplot', '%+replace%', 'aes', 'aes_string',
            'geom_line', 'geom_point', 'geom_violin', 'geom_jitter', 'geom_dotplot',
            'geom_pointrange', 'geom_errorbar', 'geom_histogram', 'geom_density', 'geom_bar',
-           'element_line', 'element_rect', 'element_text', 'element_blank', 'scale_fill_brewer',
-           'position_jitter', 'position_dodge', 'geom_smooth', 'geom_rug', 'xlim',
-           'stat_summary', 'labs', 'xlab', 'ylab', 'rel', 'theme_bw', 'scale_y_reverse',
-           'ggplot_build', 'ggsave', 'ggtitle', 'coord_polar', 'coord_flip', 'guides',
-           'guide_legend', 'geom_polygon', 'geom_boxplot', 'geom_ribbon', 'geom_abline',
-           'geom_segment', 'geom_rect', 'scale_fill_manual',
-           'geom_text', 'aes_q', 'qplot', 'scale_colour_gradient',
+           'element_line', 'element_rect', 'element_text', 'element_blank',
+           'position_jitter', 'position_dodge', 'position_stack',
+           'geom_smooth', 'geom_rug', 'geom_col', 'xlim',
+           'stat_summary', 'labs', 'xlab', 'ylab', 'rel', 'scale_y_reverse',
+           'ggplot_build', 'ggsave', 'ggtitle', 'coord_polar', 'coord_flip', 'coord_cartesian', 'guides',
+           'guide_legend', 'geom_polygon',
+           'geom_boxplot', 'geom_ribbon', 'geom_abline',
+           'geom_segment', 'geom_rect', 'geom_tile',
+           'geom_text', 'aes_q', 'qplot',
+           'scale_fill_manual', 'scale_fill_brewer', 'scale_fill_gradient2',
+           'scale_colour_gradient', 'scale_color_manual', 'scale_color_gradient',
+           'scale_fill_gradient',
            'scale_x_continuous', 'scale_y_continuous', 'geom_vline', 'geom_hline',
-           'ggplot_gtable', 'ggplotGrob', 'sec_axis', 'dup_axis');
+           'ggplot_gtable', 'ggplotGrob', 'sec_axis', 'dup_axis',
+           'theme', 'theme_minimal', 'theme_bw', 'theme_grey');
 importFrom('GGally', 'ggpairs', 'getPlot', 'putPlot', 'wrap');
 importFrom('gtable', 'gtable_add_grob', 'gtable_add_cols',
            'gtable_filter', 'gtable_add_rows');
@@ -311,8 +420,17 @@ importFrom('grid', 'unit', 'grid.newpage', 'pushViewport', 'viewport', 'grid.lay
            'textGrob', 'grid.rect', 'gpar', 'grid.draw', 'arrow',
            'convertUnit', 'grobWidth', 'grobTree');
 importFrom('gridExtra', 'arrangeGrob', 'grid.arrange');
-importFrom('ggrepel', 'geom_text_repel')
+importFrom('ggrepel', 'geom_text_repel');
+importFrom('ggridges', 'geom_density_ridges');
 importFrom('RColorBrewer', 'brewer.pal');
 importFrom('DiagrammeR', 'add_global_graph_attrs', 'render_graph');
+importFrom('viridis', 'scale_color_viridis', 'scale_fill_viridis',
+           'viridis', 'viridis_pal');
 
 importFrom('lavaan', 'sem');
+importFrom('lme4', 'lmer');
+
+importFrom('digest', 'digest');
+
+### For from_epiR_epi.2by2
+importFrom('BiasedUrn', 'dFNCHypergeo');

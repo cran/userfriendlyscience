@@ -33,7 +33,7 @@ oneway <- function(y, x, posthoc=NULL, means=FALSE, fullDescribe=FALSE,
   assign(res$input$y.name, y);
   
   res$intermediate <- list();
-  
+
   res$intermediate$aov <- aov(formula(paste0(res$input$y.name, " ~ ",
                                              res$input$x.name)));
   
@@ -72,7 +72,7 @@ oneway <- function(y, x, posthoc=NULL, means=FALSE, fullDescribe=FALSE,
   }
   
   if (levene) {
-    res$intermediate$leveneTest <- leveneTest(y, group=x, center=mean);
+    res$intermediate$leveneTest <- car::leveneTest(y, group=x, center=mean);
   }
 
   res$intermediate$etasq <- computeEffectSize_etasq(var1=x, var2=y,

@@ -1,6 +1,12 @@
 processLimeSurveyDropouts <- function(lastpage, pagenames = NULL,
                                       relevantPagenames = NULL) {
 
+  if (!is.numeric(lastpage)) {
+    stop("Argument 'lastpage' is not a numeric vector but has class ",
+         class(lastpage), ". The first nonmissing values are: ",
+         vecTxtQ(head(complete.cases(lastpage))), ".");
+  }
+  
   res <- list();
   res$specificDropout <- data.frame(lastpage = 0:max(lastpage));
 
@@ -33,6 +39,7 @@ processLimeSurveyDropouts <- function(lastpage, pagenames = NULL,
   res$progressiveDropout$percentage <- 100 * res$progressiveDropout$frequency /
     totalParticipants;
   res$progressiveDropout$page <- 1:nrow(res$progressiveDropout);
+  res$progressiveDropout$prettyPercentage <- paste0(round(res$progressiveDropout$percentage), "%");
 
   res$plots -> list;
 
@@ -47,10 +54,10 @@ processLimeSurveyDropouts <- function(lastpage, pagenames = NULL,
                     size=5, nudge_x=1) +
     scale_x_continuous(breaks=res$progressiveDropout$page);
   res$plots$relativeDropout <-
-    ggplot(res$progressiveDropout, aes_string(x='page', y='percentage')) +
+    ggplot(res$progressiveDropout, aes_string(x="page", y="percentage")) +
     geom_point(size=4) + geom_line(size=1) + ylab('Percentage of participants') +
     xlab('Page in the questionnaire') + theme_bw() +
-    geom_text_repel(aes(label=paste0(round(res$progressiveDropout$percentage), "%")),
+    geom_text_repel(aes_string(label='prettyPercentage'),
                     point.padding = unit(1, 'lines'),
                     min.segment.length = unit(0.05, "lines"),
                     segment.color="#2A5581", color="#2A5581",
