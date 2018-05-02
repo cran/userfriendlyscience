@@ -21,6 +21,7 @@ CIBER <- function(data, determinants, targets,
                   dotSize = 2.5 * baseSize,
                   baseFontSize=10*baseSize,
                   theme=theme_bw(base_size=baseFontSize),
+                  xbreaks=NULL,
                   ...) {
 
   if (!all(c(determinants, targets) %in% names(data))) {
@@ -40,10 +41,26 @@ CIBER <- function(data, determinants, targets,
   ### Extract relevant subdatasets
   res$intermediate$determinantsDat <- data[, determinants];
   res$intermediate$dat <- data[, c(determinants, targets)];
+  
+  if (class(data) != 'data.frame') {
+    stop("After having extracted the determinants (",
+         vecTxtQ(determinants), ") and the targets (",
+         vecTxtQ(targets), ") from the provided data frame, '",
+         deparse(substitute(data)),
+         "', the class of the remaining object is no longer ",
+         "'data.frame', but instead '", class(data), "'.");
+  }
 
   res$output$determinantsN <- sum(complete.cases(res$intermediate$determinantsDat));
   res$output$associationsN <- sum(complete.cases(res$intermediate$dat));
 
+  if (!all(sapply(res$intermediate$determinantsDat, is.numeric))) {
+    notNumericVars <-
+      names(res$intermediate$determinantsDat)[!sapply(res$intermediate$determinantsDat, is.numeric)];
+    stop("Not all determinants are numeric! Specifically, ",
+         vecTxtQ(notNumericVars), " are not numeric variables.");
+  }
+  
   ### For the scores, the max and min need to be determined from the data
   res$intermediate$fullColorRange <- ifelseObj(is.null(fullColorRange),
                                                range(res$intermediate$determinantsDat, na.rm = TRUE),
@@ -79,10 +96,16 @@ CIBER <- function(data, determinants, targets,
     res$intermediate$sortOrder <- order(colMeans(data[, determinants], na.rm=TRUE),
                                         decreasing=res$intermediate$decreasing);
   } else if (orderBy %IN% (targets)) {
-    res$intermediate$sortOrder <- sort(associationMatrix(data,
-                                                         x=determinants,
-                                                         y=orderBy),
-                                       decreasing=res$intermediate$decreasing)$intermediate$sorting$order;
+    tryCatch({
+      res$intermediate$sortOrder <- sort(associationMatrix(data,
+                                                           x=determinants,
+                                                           y=orderBy),
+                                         decreasing=res$intermediate$decreasing)$intermediate$sorting$order;
+    }, error = function(errorMsg) {
+      stop("When trying to call associationMatrix to get the sorting order, ",
+           "the data frame no longer has class 'numeric', but instead '",
+           class(data), "'.");
+    });
   } else {
     stop("In argument 'orderBy' either pass TRUE (to order by ",
          "(sub)determinants), or the name of one of the target ",
@@ -96,6 +119,22 @@ CIBER <- function(data, determinants, targets,
     varsToDiamondPlotDf(data, items = determinants,
                         conf.level=conf.level$means);
 
+  if (length(unique(c(targets, determinants))) < 2) {
+    stop("Something is wrong with the arguments provided ",
+         "as determinants (", vecTxtQ(determinants),
+         ") or targets (", vecTxtQ(targets),
+         "): together, they seem to contain less than ",
+         "two different elements (i.e. variable names).");
+  }
+  
+  if (getOption('ufs.debug', FALSE)) {
+    print(paste0("\nnames(res$intermediate$dat) = ",
+                 vecTxtQ(names(res$intermediate$dat)),
+                 "\ndeterminants = ", vecTxtQ(determinants),
+                 "\ntargets = ", vecTxtQ(targets),
+                 "\n"));
+  }
+  
   ### Get confidence intervals for effect sizes
   res$intermediate$assocDat <- sapply(targets, function(currentTarget) {
     return(associationsToDiamondPlotDf(res$intermediate$dat,
@@ -142,6 +181,7 @@ CIBER <- function(data, determinants, targets,
                       baseFontSize = baseFontSize,
                       theme = theme,
                       jitterHeight = .3,
+                      xbreaks=xbreaks,
                       ...);
 
   res$intermediate$meansPlot <- res$intermediate$biAxisDiamondPlot$output$plot;

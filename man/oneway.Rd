@@ -14,6 +14,7 @@ oneway(y, x, posthoc=NULL, means=FALSE,
        plot=FALSE, digits=2, omegasq = TRUE,
        etasq = TRUE, corrections = FALSE,
        pvalueDigits=3, t=FALSE, conf.level=.95,
+       posthocLetters = FALSE, posthocLetterAlpha = .05,
        silent=FALSE)
 }
 \arguments{
@@ -38,7 +39,7 @@ determined by the x variable.
   the 'describe' function in the 'psych' package are shown.
 }
   \item{levene}{
-Whether to show Levene's test for equality of variances (using \code{\link{car}}'s \code{\link{leveneTest}} function but specifying \code{\link{mean}} as function to compute the center of each group).
+Whether to show Levene's test for equality of variances (using \code{car}'s \code{\link{leveneTest}} function but specifying \code{\link{mean}} as function to compute the center of each group).
 }
   \item{plot}{
 Whether to show a plot of the means of the y variable in each of the
@@ -72,6 +73,12 @@ http://daniellakens.blogspot.nl/2014/06/calculating-confidence-intervals-for.htm
 or Steiger, J. H. (2004). Beyond the F test: Effect size confidence intervals
 and tests of close fit in the analysis of variance and contrast analysis.
 Psychological methods, 9(2), 164-82. doi:10.1037/1082-989X.9.2.164
+}
+  \item{posthocLetters}{
+  Whether to also compute and show the letters signifying differences between groups when conducting post hoc tests. This requires package \code{multcompView} to be installed.
+}
+  \item{posthocLetterAlpha}{
+  The alpha to use when determining whether groups have different means when using \code{posthocLetters}.
 }
   \item{silent}{
 Whether to show warnings and other diagnostic information or remain silent.
