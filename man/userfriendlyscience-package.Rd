@@ -42,7 +42,7 @@ Contributors: Peter Verboon (\code{\link{convert.omegasq.to.cohensf}}, \code{\li
 
 A number of functions in this package use code fragments that were used without explicit communicating with the author (because I've been unable to find contact details of the authors, or because I haven't gotten around to contacting them yet). The authors of these fragments are John Fox (\code{car} code in \code{\link{ggqq}}), Floo0 (\code{\link{ggqq}}), Jason Aizkalns (\code{\link{ggBoxplot}}), Luke Tierney (in \code{\link{pwr.cohensdCI}}, its alias \code{\link{pwr.confIntd}}, and \code{\link{cohensdCI}}).
 
-In addition, the function \code{escapeRegEx} from package \code{Hmisc} is included and used internally to avoid importing that entire package just for that function. This function was written by Charles Dupont (Department of Biostatistics, Vanderbilt University). The help page was also taken from that package.
+In addition, the function \code{escapeRegEx} from package \code{Hmisc} is included and used internally to avoid importing that entire package just for that function. This function was written by Charles Dupont (Department of Biostatistics, Vanderbilt University). The help page was also taken from that package. The \code{ad.test} function  from package \code{nortest} was included for the same reason; this was written by Juergen Gross. These functions are not exported.
 
 Maintainer: Gjalt-Jorn Peters <gjalt-jorn@userfriendlyscience.com>
 }
@@ -97,11 +97,11 @@ scaleStructure(dat=exampleData, ci=FALSE,
                omega.psych=FALSE, poly=FALSE);
 }
 
-### Create a dichotomous variable
-exampleData$group <- cut(exampleData$t0_item2, 2);
-
 ### Show item distributions and means
 meansDiamondPlot(exampleData);
+
+### Create a dichotomous variable
+exampleData$group <- cut(exampleData$t0_item2, 2);
 
 ### Show a dlvPlot
 dlvPlot(exampleData, x="group", y="t0_item1");
